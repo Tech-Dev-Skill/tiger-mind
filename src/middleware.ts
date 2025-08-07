@@ -38,9 +38,22 @@ export async function middleware(request: NextRequest) {
       data: { user },
     } = await supabase.auth.getUser()
 
-    // Protect admin routes
-    if (request.nextUrl.pathname.startsWith('/admin') && !user) {
-      return NextResponse.redirect(new URL('/login', request.url))
+    // Protect admin routes - check role
+    if (request.nextUrl.pathname.startsWith('/admin')) {
+      if (!user) {
+        return NextResponse.redirect(new URL('/login', request.url))
+      }
+      
+      // Check if user is admin
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single()
+
+      if (!profile || !['admin', 'super_admin'].includes(profile.role)) {
+        return NextResponse.redirect(new URL('/student', request.url))
+      }
     }
 
     // Protect student routes

@@ -62,7 +62,18 @@ export default function LoginPage() {
         })
         if (error) throw error
 
-        router.push('/student')
+        // Obtener el perfil del usuario para verificar el rol
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', data.user.id)
+          .single()
+
+        if (profile?.role === 'admin' || profile?.role === 'super_admin') {
+          router.push('/admin')
+        } else {
+          router.push('/student')
+        }
       }
     } catch (error: any) {
       setError(error.message)
