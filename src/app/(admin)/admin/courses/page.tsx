@@ -156,6 +156,12 @@ export default async function AdminCourses() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex space-x-2">
                         <Link
+                          href={`/admin/courses/${course.id}/videos`}
+                          className="text-green-500 hover:text-green-400 mr-2"
+                        >
+                          <PlusCircle className="w-4 h-4" />
+                        </Link>
+                        <Link
                           href={`/admin/courses/${course.id}/edit`}
                           className="text-orange-500 hover:text-orange-400"
                         >

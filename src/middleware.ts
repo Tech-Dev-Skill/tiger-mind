@@ -41,6 +41,7 @@ export async function middleware(request: NextRequest) {
     // Protect admin routes - check role
     if (request.nextUrl.pathname.startsWith('/admin')) {
       if (!user) {
+        console.log(`No user found for admin route ${request.nextUrl.pathname} - redirecting to login`)
         return NextResponse.redirect(new URL('/login', request.url))
       }
       
@@ -52,13 +53,22 @@ export async function middleware(request: NextRequest) {
         .single()
 
       if (!profile || !['admin', 'super_admin'].includes(profile.role)) {
+        console.log(`User ${user.id} with role ${profile?.role} redirected to student dashboard from ${request.nextUrl.pathname}`)
         return NextResponse.redirect(new URL('/student', request.url))
       }
+      
+      console.log(`User ${user.id} with role ${profile?.role} granted access to ${request.nextUrl.pathname}`)
     }
 
     // Protect student routes
     if (request.nextUrl.pathname.startsWith('/dashboard') && !user) {
+      console.log(`No user found for dashboard route ${request.nextUrl.pathname} - redirecting to login`)
       return NextResponse.redirect(new URL('/login', request.url))
+    }
+
+    // Debug logging for new video route
+    if (request.nextUrl.pathname.startsWith('/new')) {
+      console.log(`Accessing /new route - User: ${user?.id || 'none'}`)
     }
   } catch (error) {
     console.error('Supabase middleware error:', error)

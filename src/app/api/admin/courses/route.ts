@@ -1,26 +1,15 @@
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
+import { createServerSupabaseClient, checkAdminAccess } from '@/lib/api-helpers'
 import { NextResponse } from 'next/server'
 
 // GET - Listar todos los cursos (para el admin)
 export async function GET() {
   try {
-    const supabase = createRouteHandlerClient({ cookies })
+    const supabase = await createServerSupabaseClient()
 
     // Verificar que el usuario sea admin
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) {
-      return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
-    }
-
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single()
-
-    if (!profile || !['admin', 'super_admin'].includes(profile.role)) {
-      return NextResponse.json({ error: 'No tienes permisos de administrador' }, { status: 403 })
+    const adminCheck = await checkAdminAccess(supabase)
+    if (adminCheck.error) {
+      return NextResponse.json({ error: adminCheck.error }, { status: adminCheck.status })
     }
 
     // Obtener todos los cursos con información del instructor
@@ -55,22 +44,12 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const courseData = await request.json()
-    const supabase = createRouteHandlerClient({ cookies })
+    const supabase = await createServerSupabaseClient()
 
     // Verificar que el usuario sea admin
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) {
-      return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
-    }
-
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single()
-
-    if (!profile || !['admin', 'super_admin'].includes(profile.role)) {
-      return NextResponse.json({ error: 'No tienes permisos de administrador' }, { status: 403 })
+    const adminCheck = await checkAdminAccess(supabase)
+    if (adminCheck.error) {
+      return NextResponse.json({ error: adminCheck.error }, { status: adminCheck.status })
     }
 
     // Validar datos requeridos
@@ -102,8 +81,17 @@ export async function POST(request: Request) {
     const { data: course, error } = await supabase
       .from('courses')
       .insert({
-        ...courseData,
-        instructor_id: user.id,
+        title: courseData.title,
+        slug: courseData.slug,
+        description: courseData.long_description || courseData.description,
+        short_description: courseData.description,
+        price: courseData.price,
+        category_id: courseData.category_id,
+        thumbnail_url: courseData.thumbnail_url,
+        trailer_url: courseData.video_url,
+        duration_hours: courseData.duration_hours || 0,
+        is_published: courseData.is_published || false,
+        instructor_id: adminCheck.user.id,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       })
