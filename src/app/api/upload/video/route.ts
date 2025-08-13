@@ -1,7 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
-import { writeFile, mkdir } from 'fs/promises'
+import { writeFile, mkdir, unlink } from 'fs/promises'
 import { join } from 'path'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -119,7 +119,6 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       // Si falla la inserción, eliminar el archivo
-      const { unlink } = require('fs/promises')
       await unlink(filePath).catch(() => {})
       
       return NextResponse.json({ error: `Error al guardar en la base de datos: ${error.message}` }, { status: 500 })
