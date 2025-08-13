@@ -96,6 +96,16 @@ npm run build
 npm start
 ```
 
+## Exportar sitio estático
+
+Para generar el sitio como archivos estáticos listos para desplegar (por ejemplo, en Vercel o cualquier hosting estático):
+
+```bash
+npm run export
+```
+
+Esto crea una carpeta `out/` con todos los archivos estáticos generados por Next.js. Puedes desplegar el contenido de la carpeta `out/` en cualquier servicio de hosting estático.
+
 ## Próximos Pasos
 
 - [ ] Configurar base de datos de cursos en Supabase
