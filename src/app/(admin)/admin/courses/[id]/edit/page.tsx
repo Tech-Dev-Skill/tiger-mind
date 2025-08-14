@@ -84,9 +84,10 @@ async function getCategories() {
 export default async function EditCoursePage({
   params,
 }: {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }) {
-  const course = await getCourse(params.id)
+  const { id } = await params
+  const course = await getCourse(id)
   const categories = await getCategories()
 
   return (
