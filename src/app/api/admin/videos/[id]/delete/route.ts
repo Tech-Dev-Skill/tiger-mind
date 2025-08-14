@@ -26,9 +26,10 @@ async function createServerSupabaseClient() {
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const supabase = await createServerSupabaseClient()
     
     // Verificar autenticación
@@ -52,7 +53,7 @@ export async function DELETE(
     const { data: video } = await supabase
       .from('videos')
       .select('video_url, course_id')
-      .eq('id', params.id)
+      .eq('id', id)
       .single()
 
     if (!video) {
@@ -74,7 +75,7 @@ export async function DELETE(
     const { error } = await supabase
       .from('videos')
       .delete()
-      .eq('id', params.id)
+      .eq('id', id)
 
     if (error) {
       return NextResponse.json({ error: `Error al eliminar de la base de datos: ${error.message}` }, { status: 500 })
@@ -91,7 +92,8 @@ export async function DELETE(
 // También permitir POST para compatibilidad con formularios HTML
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  return DELETE(request, { params })
+  const { id } = await params
+  return DELETE(request, { params: Promise.resolve({ id }) })
 }

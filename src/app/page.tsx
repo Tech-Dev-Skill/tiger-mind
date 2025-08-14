@@ -1,5 +1,5 @@
-import TigermindLanding from '@/components/tigermind-landing'
+import { redirect } from 'next/navigation'
 
 export default function Home() {
-  return <TigermindLanding />
+  redirect('/student')
 }

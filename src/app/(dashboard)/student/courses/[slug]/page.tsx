@@ -74,10 +74,11 @@ async function getCourseData(slug: string, userId: string) {
 }
 
 interface Props {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 export default async function StudentCoursePage({ params }: Props) {
+  const { slug } = await params
   const supabase = await createServerSupabaseClient();
   const { data: { user } } = await supabase.auth.getUser();
   
@@ -85,7 +86,7 @@ export default async function StudentCoursePage({ params }: Props) {
     redirect('/login');
   }
 
-  const data = await getCourseData(params.slug, user.id);
+  const data = await getCourseData(slug, user.id);
 
   if (!data) {
     redirect('/student');
