@@ -110,7 +110,7 @@ export default function LoginPage() {
       <div className="max-w-md w-full space-y-8 px-4">
         <div className="text-center">
           <h1 className="text-4xl font-bold text-white mb-2">
-            Tiger Mind
+            <a href="/" className="text-gray-300 hover:text-white">Tiger Mind</a>
           </h1>
           <h2 className="text-2xl font-bold text-orange-500">
             {isSignUp ? 'Crea tu cuenta' : 'Bienvenido de vuelta'}

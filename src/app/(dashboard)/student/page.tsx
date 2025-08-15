@@ -153,7 +153,7 @@ export default async function StudentDashboard() {
               </div>
               <div className="ml-3">
                 <p className="text-sm text-yellow-700">
-                  Activa tu suscripción para acceder a todos los cursos premium
+                  Activa tu suscripción para acceder a todos los cursos 
                 </p>
                 <Link href="/subscription" className="mt-2 text-sm font-medium text-yellow-700 hover:text-yellow-600">
                   Activar suscripción →
