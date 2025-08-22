@@ -20,8 +20,8 @@ export default function TigermindLanding() {
       <section className="min-h-screen flex items-center justify-center py-20 px-4">
         <div className="max-w-6xl mx-auto text-center">
           <h1 className="text-5xl md:text-7xl font-black mb-6 leading-tight">
-            <b className="text-white">Asi fue como con 20 años pude</b><br />
-            <span className="text-orange-500">TRANSFORMAR MI VIDA</span>
+            <b className="text-white">De cero hábitos a transformar  </b><br />
+            <span className="text-orange-500">mi vida con el fitness</span>
           </h1>
           
           <div className="max-w-4xl mx-auto mb-8">
@@ -50,53 +50,49 @@ export default function TigermindLanding() {
       <section className="py-20 px-4 bg-gray-100 text-gray-900">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-red-600 font-bold text-2xl uppercase mb-4">QUIEN ES MATIAS CARDOZO...</h2>
-            <h3 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
-              Como fui literalmente de un pueblo de Argentina a un LAMBORGHINI
-            </h3>
-            <p className="text-xl font-bold max-w-4xl mx-auto leading-relaxed">
-              Como pase de perder todo el propósito, tener malos habitos, perseguir el dinero, no tener confianza, 
-              creer que era un fracasado a generar cientos de miles de dolares de beneficio al año, tener un cuerpo 
-              increible y convertirme en ese hombre que admiro y respeto
+            <h2 className="text-red-600 font-bold text-2xl uppercase mb-4">“Mi historia: de la calle al gym, del desorden a la disciplina.”</h2>
+            <p className="text-xl font-bold max-w-4xl mx-auto leading-relaxed text-justify">
+              Soy Nixon Silva, tengo 24 años. Comencé a entrenar desde los 15 en parques, 
+              haciendo calistenia. A los 21, decidí entrar al gimnasio y fue ahí donde todo cambió.
+              Pasé de ser un joven sin hábitos, sin rumbo, a un hombre disciplinado, con mentalidad 
+              fuerte y dueño de su propio negocio. Hoy, gracias al fitness, transformé mi cuerpo, mi entorno y mi mente.
+            <br />
+            </p>
+            <p className="text-red-600 font-bold uppercase mb-4" style={{ fontSize: '1.25rem' }}>
+              Y ahora quiero ayudarte a ti a lograr lo mismo. Si yo lo logré, tú también puedes.
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-12 items-center mb-12">
-            <div className="order-2 md:order-1">
-              <Image 
-                src="/images/1_index.JPG" 
-                alt="Matias 2023" 
-                width={600} 
-                height={400} 
-                className="rounded-lg w-full h-auto"
+            <div className="order-2 md:order-1 flex justify-end">
+              <Image
+                src="/images/1_index.JPG"
+                alt="Nixon"
+                width={450} // La mitad de 600
+                height={300} // La mitad de 400
+                className="rounded-lg mx-auto"
               />
             </div>
             <div className="order-1 md:order-2">
-              <h4 className="text-3xl font-bold mb-4">2023</h4>
-              <p className="mb-4">Despues de haber fracasado en ese sueño que tuve siempre desde chico y haberme perdido el proposito conoci a mi actual mentor Llados.</p>
-              <p className="mb-4">Empece a cambiar mis acciones, pensamientos por mas que no tenia ni un solo dolar en mi cuenta.</p>
-              <p className="mb-4">Vivia con mis padres. Ellos ganaban 600 dolares al mes entre los 2. No me faltaba nada pero tampoco me sobraba.</p>
-              <p>No tenia el fisico que siempre quise tener</p>
+              <h4 className="text-3xl font-bold mb-4">2020</h4>
+              <p className="mb-4 text-justify">soy Nixon Silva, y no siempre fui el que ves hoy.
+                  Antes era un chico sin hábitos, rodeado de malas relaciones, malos consejos y sin una dirección clara. No tenía energía, motivación ni confianza en mí mismo.</p>
             </div>
           </div>
 
           <div className="grid md:grid-cols-2 gap-12 items-center mb-12">
             <div>
               <h4 className="text-3xl font-bold mb-4">2025</h4>
-              <p className="mb-4">Creo ese hombre que admiro y que respeto.</p>
-              <p className="mb-4">Me compro mi Lamborghini</p>
-              <p className="mb-4">Viajo a mas de 7 paises en primera clase</p>
-              <p className="mb-4">Me convierto en un referente en LATAM de Desarrollo Personal y Coaching</p>
-              <p className="mb-4">Cumplo mi sueño de vivir de mi Marca Personal, de tener un negocio, de ser proveedor de mi familia, pero lo que mas importa de todo esto es en la persona en que me converti en este lapso de tiempo.</p>
-              <p>Porque ya no me valido con todo eso que logre sino con QUIEN SOY Y hoy en dia me hace feliz ayudar a las personas a entender como funciona la mente para lograr aquello que desean.</p>
+              <p className="mb-4 text-justify">Soy la mejor versión de mí mismo: físicamente fuerte, mentalmente enfocado, con hábitos saludables y rodeado de personas que suman.
+                Ahora quiero ayudarte a ti a lograr lo mismo. Porque si yo pude cambiar, tú también puedes.</p>
             </div>
             <div>
-              <Image 
-                src="/images/2_Index.PNG" 
-                alt="Matias 2025" 
-                width={600} 
-                height={400} 
-                className="rounded-lg w-full h-auto"
+               <Image
+                src="/images/2_index.PNG"
+                alt="Nixon"
+                width={450} // La mitad de 600
+                height={300} // La mitad de 400
+                className="rounded-lg mx-auto"
               />
             </div>
           </div>
@@ -112,52 +108,106 @@ export default function TigermindLanding() {
         </div>
       </section>
 
-      {/* Learn Section */}
-      <section className="py-20 px-4 bg-black text-white">
-        <div className="max-w-6xl mx-auto text-center">
-          <h2 className="text-red-600 font-bold text-2xl uppercase mb-4">¿Qué vas a aprender conmigo?</h2>
-          <h1 className="text-4xl md:text-5xl font-bold mb-8 leading-tight">
-            Vas a entender como funciona el ÉXITO y como PODÉS crear la realidad de tus sueños sin importar en que punto te encuentres
-          </h1>
-          
-          <div className="max-w-5xl mx-auto mb-8">
-            <Image 
-              src="/images/La quiero en la nuestra de resultados.PNG" 
-              alt="Success" 
-              width={800} 
-              height={450} 
-              className="rounded-lg w-full h-auto mx-auto"
-            />
-          </div>
 
-          <h4 className="text-xl md:text-2xl max-w-4xl mx-auto leading-relaxed">
-            ¿Por que no todas las personas que empiezan la universidad se reciben? <br/>
-            ¿Por que no todas las personas que van al gimnasio estan en forma?<br/>
-            ¿Por que no todas las personas que quieren crear un negocio lo tienen?<br/><br/>
-            Estan enfocados en TENER, no en SER
-          </h4>
-        </div>
-      </section>
-
-      {/* For Me Section */}
+ {/* For Me Section */}
       <section className="py-20 px-4 bg-black text-white">
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <Image 
-                src="/images/IMG_7157.HEIC" 
-                alt="Is this for me?" 
+                src="/images/3_index.png" 
+                alt="Nixon" 
                 width={500} 
                 height={500} 
                 className="rounded-lg w-full h-auto"
               />
             </div>
             <div>
-              <h1 className="text-4xl md:text-5xl font-bold mb-8">¿Esto es para mi?</h1>
-              <p className="text-lg mb-4">Si sos una persona la cual esta estancada hace tiempo y no puede ver resultados, si</p>
-              <p className="text-lg mb-4">Si estas empezando a emprender y te encontras perdido en tu camino, si</p>
-              <p className="text-lg mb-4">Si ya intentaste decenas de veces modelos de negocios sin ver resultados, si</p>
-              <p className="text-lg mb-8">Si Queres aprender de una persona que TIENE los RESULTADOS, si</p>
+              <h1 className="text-red-600 font-bold text-4xl uppercase mb-4">¿Qué vas a aprender conmigo?</h1>
+                <h2 className="text-4xl md:text-2xl font-bold mb-8 leading-tight text-justify">
+                  Conmigo no solo vas a aprender a entrenar tu cuerpo… vas a entrenar tu mente.
+
+                  Vas a aprender a construir hábitos que te transformen, a rodearte de un entorno que te impulse, y a mantener una disciplina que no depende de la motivación.
+
+                  Lo que hoy te parece difícil, mañana será parte de tu estilo de vida.
+
+                  Yo ya lo viví, y ahora te voy a enseñar el camino.
+
+                  Prepárate para convertirte en tu mejor versión.
+                </h2>
+            </div>
+          </div>
+        </div>
+      </section>
+    
+ {/* For Me Section */}
+      <section className="py-20 px-4 bg-black text-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+              <Image 
+                src="/images/4_index.png" 
+                alt="Nixon" 
+                width={500} 
+                height={500} 
+                className="rounded-lg w-full h-auto"
+              />
+            </div>
+            <div>
+               <h1 className="text-red-600 font-bold text-2xl uppercase mb-4">¿Esto es solo para gente que ya entrena?</h1>
+                  <h4 className="text-xl md:text-1xl max-w-4xl mx-auto leading-relaxed text-justify"> No, para nada.
+                    Mi programa es para todos los niveles. Si estás comenzando, yo te guío desde cero. Si ya entrenas, 
+                    te ayudo a llevar tu físico y mentalidad a otro nivel. Lo importante es que tengas ganas de mejorar 
+                    y estés listo para comprometerte contigo. </h4>
+                <h1 className="text-red-600 font-bold text-2xl uppercase mb-4">¿Esto solo se trata de entrenar? ¿O hay más detrás?</h1>
+                  <h4 className="text-xl md:text-1xl max-w-4xl mx-auto leading-relaxed text-justify"> Esto va mucho más allá del físico.
+                    Conmigo vas a trabajar tu mente, tus hábitos, tu entorno y tu disciplina. 
+                    Porque cuando tu mentalidad cambia, tu vida entera cambia. Yo soy prueba de eso.
+                    No busco solo que te veas bien… sino que te sientas imparable.
+                  </h4>
+                <h1 className="text-red-600 font-bold text-2xl uppercase mb-4">¿Cuánto tiempo voy a tardar en ver resultados?</h1>
+                  <h4 className="text-xl md:text-1xl max-w-3xl mx-auto leading-relaxed text-justify"> 
+                  Todo depende de ti.
+                  De tu nivel actual, tu constancia y tu compromiso. Pero si haces lo que te enseño, 
+                  los primeros cambios los puedes notar en pocas semanas. Físicamente y mentalmente.
+                  Yo no vendo magia. Vendo un camino real. Y si tú lo recorres, el cambio llega.
+                  </h4>
+            </div>
+          </div>
+        </div>
+      </section>
+      {/* For Me Section 2 */}
+      <section className="py-20 px-4 bg-black text-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+              <Image 
+                src="/images/5_index.png" 
+                alt="Nixon" 
+                width={500} 
+                height={500} 
+                className="rounded-lg w-full h-auto"
+              />
+            </div>
+            <div>
+               <h1 className="text-red-600 font-bold text-2xl uppercase mb-4"> ¿Tendré seguimiento o me dejas solo después de comprar?</h1>
+                <h4 className="text-xl md:text-1xl max-w-4xl mx-auto leading-relaxed text-justify"> 
+                  Te acompaño en todo el proceso.
+                  Esto no es un curso que compras y ya. Estoy contigo en cada etapa: resolviendo dudas,
+                  motivándote, y ajustando tu plan si es necesario. Soy tu coach, no solo tu vendedor.
+                </h4>
+              <h1 className="text-red-600 font-bold text-2xl uppercase mb-4"> ¿Puedo escribirte directamente si tengo dudas?</h1>
+                <h4 className="text-xl md:text-1xl max-w-4xl mx-auto leading-relaxed text-justify"> 
+                  Claro que sí.
+                  Cuando entres al programa vas a tener contacto directo conmigo. 
+                  Yo estoy para ayudarte a avanzar, no para dejarte en visto. 💬
+                </h4>
+              <h1 className="text-red-600 font-bold text-2xl uppercase mb-4"> ¿Qué necesito para empezar?</h1>
+                <h4 className="text-xl md:text-1xl max-w-4xl mx-auto leading-relaxed text-justify"> 
+                  Ganas de cambiar tu vida.
+                  No necesitas tener experiencia, ni un cuerpo perfecto. Solo necesitas tomar la decisión de empezar. 
+                  Todo lo demás lo construimos juntos.
+                </h4><br/>
               
               <Link 
                 href="#section-1717153620576" 
@@ -205,13 +255,13 @@ export default function TigermindLanding() {
           </div>
 
           <div className="text-center mb-8">
-            <h3 className="text-3xl font-bold mb-4">YO NO VENDO NADA, YO CREO RELACIONES</h3>
+            <h3 className="text-3xl font-bold mb-4">En 3 meses tendrás 3 meses de resultados o 3 meses de excusas</h3>
             <p className="text-xl text-gray-300 mb-8">ESTE ES MI ENTORNO</p>
           </div>
 
           <div className="max-w-4xl mx-auto">
             <Image 
-              src="/images/IMG_7021.HEIC" 
+              src="/images/6_index.png" 
               alt="Community" 
               width={800} 
               height={450} 
@@ -230,7 +280,7 @@ export default function TigermindLanding() {
 
           <div className="max-w-md mx-auto bg-gray-900 rounded-2xl p-8 text-center">
             <h3 className="text-2xl font-bold mb-4 text-orange-500">COMUNIDAD🚀</h3>
-            <h2 className="text-5xl font-bold mb-6">$100 USD/mes</h2>
+            <h2 className="text-4xl font-bold mb-6">$300 USD / 3 Meses</h2>
             
             <div className="text-left mb-8 space-y-3">
               <p>• Aprende a MATERIALIZAR todos tus deseos a través de cambiar tu persona.</p>
@@ -258,7 +308,7 @@ export default function TigermindLanding() {
 
       {/* Footer */}
       <footer className="py-8 px-4 bg-gray-900 text-center">
-        <p className="text-gray-400">© 2024 Tigermind - Todos los derechos reservados</p>
+        <p className="text-gray-400">© 2025 Tigermind - Todos los derechos reservados</p>
       </footer>
     </div>
   )
