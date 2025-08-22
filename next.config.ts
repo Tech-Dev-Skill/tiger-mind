@@ -2,7 +2,6 @@ import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
   eslint: {
-    // ⚠ Esto evita que el build falle por errores de lint
     ignoreDuringBuilds: true,
   },
   experimental: {
@@ -24,4 +23,4 @@ const nextConfig: NextConfig = {
   output: 'standalone',
 }
 
-export default nextConfig
+export default nextConfig;
