@@ -2,6 +2,7 @@ import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import type { PageProps } from 'next' // Importa el tipo PageProps
 
 async function createServerSupabaseClient() {
   const cookieStore = await cookies()
@@ -29,36 +30,29 @@ async function createServerSupabaseClient() {
 
 async function getCourse(id: string) {
   const supabase = await createServerSupabaseClient()
-
   try {
     const { data: { user } } = await supabase.auth.getUser()
-    
+
     if (!user) {
       redirect('/login')
     }
-
     const { data: profile } = await supabase
       .from('profiles')
       .select('role')
       .eq('id', user.id)
       .single()
-
     if (!profile || !['admin', 'super_admin'].includes(profile.role)) {
       redirect('/login')
     }
-
     const { data: course, error } = await supabase
       .from('courses')
       .select('*')
       .eq('id', id)
       .single()
-
     if (error || !course) {
       redirect('/admin/courses')
     }
-
     return course
-
   } catch (error) {
     console.error('Error loading course:', error)
     redirect('/admin/courses')
@@ -67,25 +61,28 @@ async function getCourse(id: string) {
 
 async function getCategories() {
   const supabase = await createServerSupabaseClient()
-
   const { data: categories, error } = await supabase
     .from('categories')
     .select('id, name, slug')
     .order('name')
-
   if (error) {
     console.error('Error loading categories:', error)
     return []
   }
-
   return categories || []
+}
+
+// Define el tipo de las props usando PageProps de Next.js
+interface EditCoursePageProps extends PageProps {
+  params: Promise<{
+    id: string;
+  }>;
 }
 
 export default async function EditCoursePage({
   params,
-}: {
-  params: Promise<{ id: string }>
-}) {
+}: EditCoursePageProps) {
+  // Desestructura el ID después de await
   const { id } = await params
   const course = await getCourse(id)
   const categories = await getCategories()
@@ -105,7 +102,6 @@ export default async function EditCoursePage({
           </div>
         </div>
       </header>
-
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-gray-800 rounded-lg p-8">
           <div className="text-center">
