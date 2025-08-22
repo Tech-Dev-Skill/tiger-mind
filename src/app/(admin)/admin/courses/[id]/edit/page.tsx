@@ -73,17 +73,14 @@ async function getCategories() {
 }
 
 // Define el tipo de las props usando PageProps de Next.js
-interface EditCoursePageProps extends PageProps {
-  params: Promise<{
-    id: string;
-  }>;
+interface EditCoursePageProps {
+  params: {
+    id: string
+  }
 }
 
-export default async function EditCoursePage({
-  params,
-}: EditCoursePageProps) {
-  // Desestructura el ID después de await
-  const { id } = await params
+export default async function EditCoursePage({ params }: EditCoursePageProps) {
+  const { id } = params  // ya no necesitas await
   const course = await getCourse(id)
   const categories = await getCategories()
 
