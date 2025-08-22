@@ -8,17 +8,6 @@ const nextConfig: NextConfig = {
   
   // CORRECCIÓN: Reemplaza experimental.serverComponentsExternalPackages
   serverExternalPackages: ['@supabase/supabase-js'],
-  
-  // CORRECCIÓN: Configuración correcta para turbopack
-  turbopack: {
-    // Habilita turbopack para desarrollo
-    dev: true,
-    // Opciones adicionales si las necesitas
-    rules: {
-      // Reglas personalizadas si las necesitas
-    }
-  },
-  
   // Configuración para imágenes de Supabase
   images: {
     domains: ['zassisqhrdzckhikublj.supabase.co'],
