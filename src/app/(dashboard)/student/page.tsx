@@ -35,13 +35,13 @@ async function getStudentData(userId: string) {
       .select('*')
       .eq('id', userId)
       .single(),
-    
+
     supabase
       .from('subscriptions')
       .select('*, subscription_plans(*)')
       .eq('user_id', userId)
       .single(),
-    
+
     supabase
       .from('courses')
       .select('*, categories(*)')
@@ -59,7 +59,7 @@ async function getStudentData(userId: string) {
 export default async function StudentDashboard() {
   const supabase = await createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
-  
+
   if (!user) {
     redirect('/login');
   }
@@ -84,14 +84,20 @@ export default async function StudentDashboard() {
         .select('*')
         .eq('id', user.id)
         .single()
-      
+
       if (newProfile) {
-        return { profile: newProfile, subscription, courses }
+        // FIX: Instead of returning an object, continue with the new profile data
+        let studentProfile = newProfile;
+        return {
+          profile: studentProfile,
+          subscription,
+          courses
+        };
       }
     }
   }
 
-  const hasActiveSubscription = subscription && subscription.status === 'active' && 
+  const hasActiveSubscription = subscription && subscription.status === 'active' &&
     new Date(subscription.end_date) > new Date();
 
   return (
@@ -109,13 +115,12 @@ export default async function StudentDashboard() {
               </p>
             </div>
             <div className="flex items-center space-x-4">
-              <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                hasActiveSubscription 
-                  ? 'bg-green-100 text-green-800' 
+              <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${hasActiveSubscription
+                  ? 'bg-green-100 text-green-800'
                   : 'bg-yellow-100 text-yellow-800'
-              }`}>
-                {hasActiveSubscription 
-                  ? `Activo hasta ${new Date(subscription.end_date).toLocaleDateString('es-ES')}` 
+                }`}>
+                {hasActiveSubscription
+                  ? `Activo hasta ${new Date(subscription.end_date).toLocaleDateString('es-ES')}`
                   : 'Sin suscripción activa'}
               </div>
               <Link
@@ -153,7 +158,7 @@ export default async function StudentDashboard() {
               </div>
               <div className="ml-3">
                 <p className="text-sm text-yellow-700">
-                  Activa tu suscripción para acceder a todos los cursos 
+                  Activa tu suscripción para acceder a todos los cursos
                 </p>
                 <Link href="/subscription" className="mt-2 text-sm font-medium text-yellow-700 hover:text-yellow-600">
                   Activar suscripción →
@@ -214,7 +219,7 @@ export default async function StudentDashboard() {
           <div className="px-6 py-4 border-b border-gray-200">
             <h2 className="text-xl font-semibold text-gray-900">Cursos disponibles</h2>
           </div>
-          
+
           {courses.length === 0 ? (
             <div className="p-6 text-center">
               <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -229,8 +234,8 @@ export default async function StudentDashboard() {
                 <div key={course.id} className="bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
                   <div className="aspect-video bg-gray-200 rounded-t-lg overflow-hidden">
                     {course.thumbnail_url ? (
-                      <img 
-                        src={course.thumbnail_url} 
+                      <img
+                        src={course.thumbnail_url}
                         alt={course.title}
                         className="w-full h-full object-cover"
                       />
@@ -242,7 +247,7 @@ export default async function StudentDashboard() {
                       </div>
                     )}
                   </div>
-                  
+
                   <div className="p-4">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-xs font-medium text-orange-600 bg-orange-50 px-2 py-1 rounded">
@@ -252,22 +257,22 @@ export default async function StudentDashboard() {
                         {course.duration_hours}h
                       </span>
                     </div>
-                    
+
                     <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
                       {course.title}
                     </h3>
-                    
+
                     <p className="text-sm text-gray-600 mb-3 line-clamp-2">
                       {course.short_description || course.description}
                     </p>
-                    
+
                     <div className="flex items-center justify-between">
                       <span className="text-lg font-bold text-gray-900">
                         ${course.price} USD
                       </span>
-                      
+
                       {hasActiveSubscription ? (
-                        <Link 
+                        <Link
                           href={`/student/courses/${course.slug}`}
                           className="px-4 py-2 bg-orange-600 text-white text-sm font-medium rounded-md hover:bg-orange-700 transition-colors"
                         >

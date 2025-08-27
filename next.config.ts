@@ -6,9 +6,10 @@ const nextConfig: NextConfig = {
   },
   serverExternalPackages: ['@supabase/supabase-js'],
   images: {
-    domains: ['zassisqhrdzckhikublj.supabase.co'],
+    domains: ['zassisqhrdzckhiklublj.supabase.co'],
   },
-  output: 'standalone',
+  // Remueve temporalmente 'standalone' para ver si eso resuelve el problema
+  // output: 'standalone',
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,

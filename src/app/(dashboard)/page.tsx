@@ -1,10 +1,17 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
+// Cambiar la importación de supabase para usar createBrowserClient directamente
+import { createBrowserClient } from '@supabase/ssr'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { BookOpen, Award, User, LogOut, PlayCircle } from 'lucide-react'
+
+// Crear el cliente de Supabase directamente aquí
+const supabase = createBrowserClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
 
 interface UserProfile {
   id: string

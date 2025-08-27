@@ -1,8 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
-import Link from 'next/link'
-import type { PageProps } from 'next' // Importa el tipo PageProps
+import Link from 'next/link'// Importa el tipo PageProps
 
 async function createServerSupabaseClient() {
   const cookieStore = await cookies()
@@ -74,13 +73,13 @@ async function getCategories() {
 
 // Define el tipo de las props usando PageProps de Next.js
 interface EditCoursePageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export default async function EditCoursePage({ params }: EditCoursePageProps) {
-  const { id } = params  // ya no necesitas await
+  const { id } = await params  // Ahora usamos await para desestructurar
   const course = await getCourse(id)
   const categories = await getCategories()
 
