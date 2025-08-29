@@ -171,13 +171,7 @@ export default async function AdminDashboard() {
               <Users className="w-5 h-5" />
               <span>Gestionar Usuarios</span>
             </Link>
-            <Link
-              href="/admin/courses/new"
-              className="flex items-center justify-center space-x-2 px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-            >
-              <PlusCircle className="w-5 h-5" />
-              <span>Nuevo Curso</span>
-            </Link>
+            
           </div>
         </div>
 
