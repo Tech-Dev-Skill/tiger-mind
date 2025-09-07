@@ -24,12 +24,27 @@ export default function TigermindLanding() {
             <span className="text-orange-500">mi vida con el fitness</span>
           </h1>
           
+          {/* --- Primer Video --- */}
           <div className="max-w-4xl mx-auto mb-8">
             <div className="aspect-video relative rounded-lg overflow-hidden">
               <iframe 
                 className="absolute inset-0 w-full h-full"
                 src="https://www.youtube.com/embed/QkR1_hVlBcQ"
-                title="Tigermind Video"
+                title="Tigermind Video 1"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+          </div>
+          
+          {/* --- Segundo Video --- */}
+          <div className="max-w-4xl mx-auto mb-8">
+            <div className="aspect-video relative rounded-lg overflow-hidden">
+              <iframe 
+                className="absolute inset-0 w-full h-full"
+                src="https://www.youtube.com/embed/kPMeIPux01U"
+                title="Tigermind Video 2"
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
@@ -75,12 +90,12 @@ export default function TigermindLanding() {
             </div>
             <div className="order-1 md:order-2">
                 <h4 className="text-3xl font-bold mb-4 text-center">2020</h4>
-                <p className="mb-4 text-justify">
-                  En el 2020 era una persona completamente diferente. Tenía el deseo de mejorar físicamente, pero no sabía realmente cómo hacerlo. Entrenaba, sí, pero sin una estructura, sin una meta clara, simplemente porque era lo que “había que hacer” o porque me hacía sentir bien por momentos. Sin embargo, por más que me moviera dentro del gimnasio, mi vida fuera de él estaba completamente desordenada. No tenía hábitos saludables, no llevaba una buena alimentación, y mucho menos un enfoque mental que acompañara ese supuesto objetivo de mejorar.
-                  <br /><br />
-                  Mi entorno tampoco ayudaba. Estaba rodeado de personas que no compartían una visión de crecimiento ni de superación. Las conversaciones giraban siempre en lo mismo, no había ambición, no había motivación, y mucho menos intención de cambiar. Me encontraba rodeado, pero al mismo tiempo solo en mi proceso. Mis días pasaban sin dirección, vivía sin propósito, sin cuestionarme si estaba realmente construyendo algo para mi futuro. Me levantaba sin energía, sin ganas reales, y sin tener idea de hacia dónde quería ir. Vivía en piloto automático, cumpliendo con lo mínimo, sin exigirme más de lo necesario.
-                  <br /><br />
-                  Lo más difícil de ese momento era que creía estar bien. Pensaba que con entrenar un par de días ya estaba haciendo lo correcto. Pero la verdad es que me sentía estancado, frustrado, y en el fondo sabía que algo no estaba bien. El cambio físico que tanto buscaba no llegaba, y no entendía por qué. Hoy, mirando hacia atrás, entiendo que no era un tema de ejercicios, sino de mentalidad, de hábitos y de entorno. Estaba completamente desconectado de mí mismo, de mis objetivos y de cualquier tipo de disciplina.
+                      <p className="text-xl max-w-4xl mx-auto leading-relaxed text-justify">
+                              En 2020, buscaba mejorar mi físico pero no sabía cómo. Entrenaba sin estructura ni metas, solo por inercia, mientras mi vida fuera del gimnasio estaba desordenada: carecía de hábitos saludables, buena alimentación y un enfoque mental claro.
+                              <br /><br />
+                              Mi entorno tampoco me motivaba. Me sentía solo en mi proceso, viviendo los días sin dirección y en piloto automático. Me levantaba sin energía ni propósito, simplemente cumpliendo con lo mínimo y sin exigirme un cambio real.
+                              <br /><br />
+                              Aunque creía estar bien, en el fondo me sentía estancado y frustrado por la falta de resultados. Comprendí que el problema no era el ejercicio, sino mi mentalidad, mis hábitos y mi entorno. Estaba desconectado de mis objetivos y de la disciplina para lograrlos.
                 </p>
               </div>
           </div>
@@ -88,15 +103,13 @@ export default function TigermindLanding() {
           <div className="grid md:grid-cols-2 gap-12 items-center mb-12">
             <div>
                 <h4 className="text-3xl font-bold mb-4 text-center">2025</h4>
-                <p className="mb-4 text-justify">
-                  Cinco años después, puedo decir con firmeza que soy otra persona. No solo cambié físicamente, sino que transformé mi forma de pensar, de vivir, y de relacionarme conmigo mismo y con el mundo. La base de todo fue construir hábitos sólidos. Entendí que el cambio físico es solo una consecuencia de lo que uno trabaja internamente día a día. Empecé a levantarme con un propósito, a planificar mis días, a cuidar mi alimentación, mi descanso, y sobre todo, mi mente.
-                  <br /><br />
-                  Dejé atrás los vicios, las distracciones, y me alejé de las personas que no me impulsaban a crecer. Fue un proceso duro, porque muchas veces eso implicó tomar decisiones incómodas, pero necesarias. Aprendí a estar solo, a convivir conmigo mismo, a conocer mis límites y a exigirme más allá de lo que alguna vez creí posible. Ese compromiso conmigo mismo se volvió inquebrantable, y fue ahí donde empecé a ver resultados reales, tanto físicos como mentales.
-                  <br /><br />
-                  Hoy vivo con una intención clara. Sé quién soy, qué quiero, y hacia dónde voy. Cada día es una nueva oportunidad para superarme, para aprender, y para seguir ayudando a otros a hacer lo mismo. Porque lo que antes era una lucha personal, hoy se transformó en una misión: acompañar a otras personas que, como yo en su momento, están buscando un cambio y no saben por dónde empezar.
-                  <br /><br />
-                  Soy prueba de que sí se puede. Que no importa cuán perdido te sientas hoy, ni cuántos errores hayas cometido antes. Con disciplina, constancia y un entorno adecuado, cualquier persona puede transformar su vida. Yo no nací con una genética especial, ni con recursos extraordinarios. Solo tomé la decisión de cambiar y no parar hasta lograrlo. Y si yo lo logré, vos también podés hacerlo.
-                </p>
+                  <p className="text-xl max-w-4xl mx-auto leading-relaxed text-justify">
+                        Cinco años después, soy una persona transformada, no solo en lo físico, sino en mi mentalidad. La clave fue construir hábitos sólidos, entendiendo que el cambio externo es un reflejo del trabajo interno. Empecé a vivir con propósito, cuidando mi alimentación, mi descanso y, sobre todo, mi mente.
+                        <br /><br />
+                        Para lograrlo, tuve que tomar decisiones difíciles, como dejar atrás distracciones y alejarme de personas que no me impulsaban a crecer. En ese proceso aprendí a estar conmigo mismo, a conocer mis límites y a exigirme más allá de lo que creía posible, forjando un compromiso inquebrantable.
+                        <br /><br />
+                        Hoy, esa lucha personal se convirtió en mi misión: guiar a otros que buscan un cambio. Soy la prueba de que no importa cuán perdido te sientas; con disciplina y constancia, cualquiera puede transformar su vida. No tuve ventajas especiales, solo tomé la decisión de cambiar, y si yo pude, tú también puedes.
+                  </p>
               </div>
             <div>
                 <Image
@@ -283,9 +296,7 @@ export default function TigermindLanding() {
         </div>
       </section>
       
-      {/* =============================================================== */}
-      {/* =================== Testimonials Section (Updated) ============ */}
-      {/* =============================================================== */}
+      {/* Testimonials Section */}
       <section className="py-20 px-4 bg-black text-white">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
@@ -295,11 +306,9 @@ export default function TigermindLanding() {
             <p className="text-lg text-gray-300">Historias reales de transformación y disciplina.</p>
           </div>
 
-          {/* Individual Testimonial Blocks */}
-
           {/* ===== TESTIMONIAL 1 (JHOAN) ===== */}
           <div className="mb-20">
-            <h3 className="text-3xl font-bold text-center mb-8 text-red-600 uppercase">- Jhoan -</h3>
+            <h3 className="text-3xl font-bold text-center mb-8 text-red-600 uppercase">- Jhoan Bautista -</h3>
             <div className="flex flex-col sm:flex-row justify-center items-center gap-8 mb-6">
               <div className="w-full sm:w-1/2 lg:w-1/3 text-center">
                 <h4 className="text-xl font-bold mb-2">ANTES</h4>
@@ -323,7 +332,7 @@ export default function TigermindLanding() {
 
           {/* ===== TESTIMONIAL 2 (STIVEN) ===== */}
           <div className="mb-20">
-            <h3 className="text-3xl font-bold text-center mb-8 text-red-600 uppercase">- Stiven -</h3>
+            <h3 className="text-3xl font-bold text-center mb-8 text-red-600 uppercase">- Stiven Calderon -</h3>
             <div className="flex flex-col sm:flex-row justify-center items-center gap-8 mb-6">
               <div className="w-full sm:w-1/2 lg:w-1/3 text-center">
                 <h4 className="text-xl font-bold mb-2">ANTES</h4>
@@ -370,8 +379,8 @@ export default function TigermindLanding() {
           </div>
 
           {/* ===== TESTIMONIAL 4 (CARLOS) ===== */}
-          <div className="mb-20">
-            <h3 className="text-3xl font-bold text-center mb-8 text-red-600 uppercase">- Carlos -</h3>
+          <div className="mb-0"> {/* <-- CAMBIO AQUÍ: mb-20 a mb-0 */}
+            <h3 className="text-3xl font-bold text-center mb-8 text-red-600 uppercase">- Carlos Gómez -</h3>
             <div className="flex flex-col sm:flex-row justify-center items-center gap-8 mb-6">
               <div className="w-full sm:w-1/2 lg:w-1/3 text-center">
                 <h4 className="text-xl font-bold mb-2">ANTES</h4>
@@ -397,7 +406,8 @@ export default function TigermindLanding() {
       </section>
 
       {/* Pricing Section */}
-      <section id="section-1717153620576" className="py-20 px-4 bg-black text-white">
+      {/* CAMBIO AQUÍ: py-20 a pb-20 para quitar el espacio superior */}
+      <section id="section-1717153620576" className="pb-20 px-4 bg-black text-white">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h1 className="text-4xl md:text-5xl font-bold">Únete a mis SALAS</h1>
