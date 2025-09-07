@@ -1,4 +1,5 @@
 import type { NextConfig } from 'next'
+import path from 'path'
 
 const nextConfig: NextConfig = {
   eslint: {
@@ -8,15 +9,10 @@ const nextConfig: NextConfig = {
   images: {
     domains: ['zassisqhrdzckhiklublj.supabase.co'],
   },
-  // Remueve temporalmente 'standalone' para ver si eso resuelve el problema
-  // output: 'standalone',
-  webpack: (config) => {
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      '@supabase/supabase-js': require.resolve('@supabase/supabase-js')
-    }
-    return config
-  },
+  outputFileTracingRoot: path.join(__dirname),
+  experimental: {
+    // Deja solo lo necesario
+  }
 }
 
 export default nextConfig
