@@ -106,24 +106,6 @@ npm run export
 
 Esto crea una carpeta `out/` con todos los archivos estáticos generados por Next.js. Puedes desplegar el contenido de la carpeta `out/` en cualquier servicio de hosting estático.
 
-## Próximos Pasos
-
-- [ ] Configurar base de datos de cursos en Supabase
-- [ ] Implementar sistema de pagos con Stripe
-- [ ] Sistema de carga de videos (YouTube/Vimeo API)
-- [ ] Dashboard completo de administración
-- [ ] Sistema de progreso de estudiantes
-- [ ] Certificados digitales
-- [ ] Sistema de reviews y ratings
-
-## Contribuir
-
-1. Fork el proyecto
-2. Crea tu feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la branch (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
-
 ## Licencia
 
 Este proyecto está bajo la licencia MIT.
