@@ -1,34 +1,9 @@
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers';
+import { createClient } from '@/lib/server';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 
-async function createServerSupabaseClient() {
-  const cookieStore = await cookies()
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll()
-        },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) => {
-              cookieStore.set(name, value, options)
-            })
-          } catch (error) {
-            console.error('Error setting cookies:', error)
-          }
-        },
-      },
-    }
-  )
-}
-
 async function getStudentData(userId: string) {
-  const supabase = await createServerSupabaseClient()
+  const supabase = await createClient(); // <-- CORREGIDO
 
   const [profile, subscriptions, courses] = await Promise.all([
     supabase
@@ -58,8 +33,8 @@ async function getStudentData(userId: string) {
 }
 
 export default async function StudentDashboard() {
-  const supabase = await createServerSupabaseClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const supabase = await createClient(); // <-- CORREGIDO
+  const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
     redirect('/login');
@@ -76,7 +51,7 @@ export default async function StudentDashboard() {
         email: user.email,
         full_name: user.user_metadata?.full_name || user.user_metadata?.name || null,
         role: 'student'
-      })
+      });
 
     if (!error) {
       // Recargar datos con el nuevo perfil

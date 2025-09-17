@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@/lib/client' // <-- 1. IMPORTACIÓN CORREGIDA
 
 interface Video {
   id: string
@@ -23,6 +23,7 @@ interface Course {
 }
 
 export default function CourseVideosPage({ params }: { params: Promise<{ id: string }> }) {
+  const supabase = createClient() // <-- 2. LLAMADA A LA FUNCIÓN
   const router = useRouter()
   const [id, setId] = useState<string>('')
   const [course, setCourse] = useState<Course | null>(null)

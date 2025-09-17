@@ -1,36 +1,15 @@
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
-import { redirect } from 'next/navigation'
-import Link from 'next/link'
-import { Eye, Edit3, PlusCircle, Trash2, BookOpen, PlayCircle, Clock, Users } from 'lucide-react'
-
-async function createServerSupabaseClient() {
-  const cookieStore = await cookies()
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll()
-        },
-        setAll(cookiesToSet: any[]) {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            cookieStore.set(name, value, options)
-          })
-        },
-      },
-    }
-  )
-}
+import { createClient } from '@/lib/server';
+import { redirect } from 'next/navigation';
+import Link from 'next/link';
+import { Eye, Edit3, PlusCircle, Trash2, BookOpen, PlayCircle, Clock, Users } from 'lucide-react';
 
 async function getCourse(id: string) {
-  const supabase = await createServerSupabaseClient()
+  const supabase = await createClient(); // <-- CORRECCIÓN: Se añadió 'await'
   
   // Verificar autenticación
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
-    redirect('/login')
+    redirect('/login');
   }
 
   // Verificar rol de administrador
@@ -38,10 +17,10 @@ async function getCourse(id: string) {
     .from('profiles')
     .select('role')
     .eq('id', user.id)
-    .single()
+    .single();
 
   if (!profile || !['admin', 'super_admin'].includes(profile.role)) {
-    redirect('/student')
+    redirect('/student');
   }
 
   // Obtener información del curso con estadísticas
@@ -53,10 +32,10 @@ async function getCourse(id: string) {
       profiles!instructor_id (full_name, email)
     `)
     .eq('id', id)
-    .single()
+    .single();
 
   if (error || !course) {
-    redirect('/admin/courses')
+    redirect('/admin/courses');
   }
 
   // Obtener módulos del curso
@@ -64,31 +43,31 @@ async function getCourse(id: string) {
     .from('course_modules')
     .select('*, videos(count)')
     .eq('course_id', id)
-    .order('order_index')
+    .order('order_index');
 
   // Obtener total de videos
   const { data: videos, error: videosError } = await supabase
     .from('videos')
     .select('id')
-    .eq('course_id', id)
+    .eq('course_id', id);
 
   // Obtener total de estudiantes inscritos
   const { data: enrollments } = await supabase
     .from('enrollments')
     .select('id')
-    .eq('course_id', id)
+    .eq('course_id', id);
 
   return {
     course,
     modules: modules || [],
     totalVideos: videos?.length || 0,
     totalStudents: enrollments?.length || 0
-  }
+  };
 }
 
 export default async function CourseDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params
-  const { course, modules, totalVideos, totalStudents } = await getCourse(id)
+  const { id } = await params;
+  const { course, modules, totalVideos, totalStudents } = await getCourse(id);
 
   return (
     <div className="min-h-screen bg-gray-900">

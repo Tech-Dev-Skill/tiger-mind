@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@/lib/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
@@ -15,6 +15,7 @@ interface Course {
 }
 
 export default function CoursesPage() {
+  const supabase = createClient()
   const [courses, setCourses] = useState<Course[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -66,7 +67,7 @@ export default function CoursesPage() {
               <p className="text-gray-300">Mis Cursos</p>
             </div>
             <div className="flex items-center space-x-4">
-              <Link 
+              <Link
                 href="/dashboard"
                 className="text-gray-300 hover:text-white"
               >
@@ -104,7 +105,7 @@ export default function CoursesPage() {
                 <p className="text-gray-300 mb-4">
                   Pronto agregaremos contenido exclusivo para ti
                 </p>
-                <Link 
+                <Link
                   href="/dashboard"
                   className="bg-orange-600 text-white px-6 py-2 rounded hover:bg-orange-700"
                 >
@@ -117,8 +118,8 @@ export default function CoursesPage() {
               {courses.map((course) => (
                 <div key={course.id} className="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
                   {course.thumbnail_url && (
-                    <img 
-                      src={course.thumbnail_url} 
+                    <img
+                      src={course.thumbnail_url}
                       alt={course.title}
                       className="w-full h-48 object-cover"
                     />
@@ -134,7 +135,7 @@ export default function CoursesPage() {
                       <span className="text-orange-500 font-bold">
                         ${course.price}
                       </span>
-                      <Link 
+                      <Link
                         href={`/dashboard/courses/${course.id}`}
                         className="bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-700"
                       >

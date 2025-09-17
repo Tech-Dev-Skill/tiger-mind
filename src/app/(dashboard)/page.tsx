@@ -1,11 +1,9 @@
-import dynamic from 'next/dynamic'
+// src/app/page.tsx
 
-// Importar el componente de forma dinámica con SSR desactivado
-const DashboardPageClient = dynamic(
-  () => import('./dashboard-client'),
-  { ssr: false }
-)
+export const dynamic = 'force-dynamic'; // <-- Añade esta línea
 
-export default function DashboardPage() {
-  return <DashboardPageClient />
+import { redirect } from 'next/navigation';
+
+export default function Home() {
+  redirect('/student');
 }

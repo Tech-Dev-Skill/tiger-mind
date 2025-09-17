@@ -1,13 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@/lib/client'; // <-- 1. IMPORTACIÓN CORREGIDA
 import { useRouter } from 'next/navigation';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
 
 interface SubscriptionPlan {
   id: string;
@@ -20,6 +15,7 @@ interface SubscriptionPlan {
 }
 
 export default function SubscriptionPage() {
+  const supabase = createClient(); // <-- 2. LLAMADA A LA FUNCIÓN
   const router = useRouter();
   const [plan, setPlan] = useState<SubscriptionPlan | null>(null);
   const [loading, setLoading] = useState(true);

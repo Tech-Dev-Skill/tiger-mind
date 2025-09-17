@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@/lib/client' // <-- 1. IMPORTACIÓN CORREGIDA
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
@@ -11,9 +11,13 @@ interface Profile {
   email: string
   avatar_url?: string
   created_at: string
+  phone?: string
+  country?: string
+  updated_at?: string
 }
 
 export default function ProfilePage() {
+  const supabase = createClient() // <-- 2. LLAMADA A LA FUNCIÓN
   const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -29,7 +33,7 @@ export default function ProfilePage() {
   const loadProfile = async () => {
     try {
       const { data: { user }, error: authError } = await supabase.auth.getUser()
-      
+
       if (authError) {
         console.error('Auth error:', authError)
         router.push('/login')
@@ -56,11 +60,11 @@ export default function ProfilePage() {
       if (error) {
         console.error('Error loading profile:', error)
         console.error('Error details:', JSON.stringify(error, null, 2))
-        
+
         // Si no existe el perfil, intentar crearlo vía API
         if (error.code === 'PGRST116' || error.message?.includes('No rows found')) {
           console.log('Profile not found, attempting to create...')
-          
+
           try {
             // Primero intentar crear el perfil vía API
             const response = await fetch('/api/auth/setup-profile', {
@@ -79,7 +83,7 @@ export default function ProfilePage() {
                 .single()
 
               if (newError) throw newError
-              
+
               setProfile(newData)
               setFullName(newData.full_name || '')
             } else {
@@ -100,7 +104,7 @@ export default function ProfilePage() {
                 console.error('Error creating profile:', createError)
                 throw createError
               }
-              
+
               setProfile(newProfile)
               setFullName(newProfile.full_name || '')
             }
@@ -168,7 +172,7 @@ export default function ProfilePage() {
               <p className="text-gray-300">Mi Perfil</p>
             </div>
             <div className="flex items-center space-x-4">
-              <Link 
+              <Link
                 href="/student"
                 className="text-gray-300 hover:text-white"
               >
@@ -185,13 +189,13 @@ export default function ProfilePage() {
           <div className="max-w-md mx-auto">
             <div className="bg-gray-800 rounded-lg shadow-lg p-6">
               <h2 className="text-2xl font-bold text-white mb-6">Mi Perfil</h2>
-              
+
               {error && (
                 <div className="bg-red-600 text-white p-3 rounded mb-4">
                   {error}
                 </div>
               )}
-              
+
               {success && (
                 <div className="bg-green-600 text-white p-3 rounded mb-4">
                   {success}

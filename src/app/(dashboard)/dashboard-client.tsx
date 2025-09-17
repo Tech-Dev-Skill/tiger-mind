@@ -1,11 +1,12 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { createBrowserClient } from '@supabase/ssr'
+import { createClient } from '@/lib/client' // <-- 1. IMPORTACIÓN CORRECTA
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { BookOpen, Award, User, LogOut, PlayCircle } from 'lucide-react'
 
+// ... (las interfaces no cambian) ...
 interface UserProfile {
   id: string
   email: string
@@ -34,32 +35,22 @@ interface Subscription {
 }
 
 export default function DashboardPageClient() {
+  const supabase = createClient() // <-- 2. CREACIÓN CORRECTA DEL CLIENTE
   const router = useRouter()
   const [user, setUser] = useState<UserProfile | null>(null)
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([])
   const [courses, setCourses] = useState<Course[]>([])
   const [loading, setLoading] = useState(true)
-  const [supabase, setSupabase] = useState<any>(null)
+
+  // Ya no necesitamos un estado para el cliente de Supabase
+  // const [supabase, setSupabase] = useState<any>(null)
 
   useEffect(() => {
-    // Crear el cliente de Supabase dentro de useEffect
-    const supabaseClient = createBrowserClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    )
-    setSupabase(supabaseClient)
+    // La carga de datos ahora puede empezar directamente
+    loadData()
   }, [])
 
-  useEffect(() => {
-    // Solo cargar datos cuando el cliente de Supabase esté disponible
-    if (supabase) {
-      loadData()
-    }
-  }, [supabase])
-
   const loadData = async () => {
-    if (!supabase) return
-    
     try {
       const { data: { user: authUser } } = await supabase.auth.getUser()
       if (!authUser) {
@@ -115,7 +106,6 @@ export default function DashboardPageClient() {
   }
 
   const handleLogout = async () => {
-    if (!supabase) return
     await supabase.auth.signOut()
     router.push('/login')
   }
