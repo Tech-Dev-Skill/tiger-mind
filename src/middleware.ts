@@ -1,10 +1,9 @@
-// src/middleware.ts (CORREGIDO)
+// src/middleware.ts
 
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
-  // 1. Creamos la respuesta al principio. La modificaremos si es necesario.
   let response = NextResponse.next({
     request: {
       headers: request.headers,
@@ -17,19 +16,26 @@ export async function middleware(request: NextRequest) {
 
   if (!supabaseUrl || !supabaseAnonKey) {
     console.warn('Supabase credentials missing - skipping auth middleware')
-    return response // Devuelve la respuesta inicial
+    return response
   }
 
-  // 2. Creamos el cliente de Supabase con el MANEJADOR DE COOKIES CORRECTO.
+  // Rutas públicas que no requieren autenticación
+  const publicPaths = ['/', '/landing', '/login']
+  const isPublicPath = publicPaths.some(path => 
+    request.nextUrl.pathname === path || request.nextUrl.pathname.startsWith(path + '/')
+  )
+
+  if (isPublicPath) {
+    return response
+  }
+
   const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
     cookies: {
       get(name: string) {
         return request.cookies.get(name)?.value
       },
       set(name: string, value: string, options) {
-        // Si se necesita establecer una cookie, primero la actualizamos en la petición...
         request.cookies.set({ name, value, ...options })
-        // ...y luego creamos una NUEVA respuesta para poder establecer la cookie en la respuesta final.
         response = NextResponse.next({
           request: {
             headers: request.headers,
@@ -49,7 +55,6 @@ export async function middleware(request: NextRequest) {
     },
   })
 
-  // 3. El resto de tu lógica para proteger rutas permanece IGUAL.
   try {
     const {
       data: { user },
@@ -65,7 +70,7 @@ export async function middleware(request: NextRequest) {
         .eq('id', user.id)
         .single()
       if (!profile || !['admin', 'super_admin'].includes(profile.role)) {
-        return NextResponse.redirect(new URL('/dashboard', request.url)) // Corregido a /dashboard
+        return NextResponse.redirect(new URL('/dashboard', request.url))
       }
     }
 
@@ -73,14 +78,14 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/login', request.url))
     }
 
-    if (request.nextUrl.pathname.startsWith('/new')) {
-      console.log(`Accessing /new route - User: ${user?.id || 'none'}`)
+    if (request.nextUrl.pathname.startsWith('/student') && !user) {
+      return NextResponse.redirect(new URL('/login', request.url))
     }
+
   } catch (error) {
     console.error('Supabase middleware error:', error)
   }
 
-  // 4. Devolvemos la respuesta final (que puede haber sido actualizada al manejar cookies).
   return response
 }
 
