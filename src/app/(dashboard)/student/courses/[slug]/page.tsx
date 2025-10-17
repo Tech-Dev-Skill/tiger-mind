@@ -48,7 +48,6 @@ async function getCourseData(slug: string, userId: string) {
     .order('order_index', { ascending: true })
     .order('videos.order_index', { ascending: true });
 
-<<<<<<< HEAD
   // Obtener videos sin módulo asignado
   const { data: videosWithoutModule } = await supabase
     .from('videos')
@@ -57,8 +56,6 @@ async function getCourseData(slug: string, userId: string) {
     .is('module_id', null)
     .order('order_index', { ascending: true });
 
-=======
->>>>>>> b0fe47e70e6cd859f303be9e4c24467bcb8596b3
   // Verificar suscripción activa
   const { data: subscription } = await supabase
     .from('subscriptions')
@@ -79,10 +76,7 @@ async function getCourseData(slug: string, userId: string) {
   return {
     course,
     modules: modules || [],
-<<<<<<< HEAD
     videosWithoutModule: videosWithoutModule || [],
-=======
->>>>>>> b0fe47e70e6cd859f303be9e4c24467bcb8596b3
     hasActiveSubscription: !!subscription,
     progress: progress || { progress_percentage: 0, completed_videos: [] }
   };
