@@ -36,7 +36,7 @@ const nextConfig: NextConfig = {
   },
   outputFileTracingRoot: path.join(__dirname),
   experimental: {
-    // middlewareClientMaxBodySize: '500mb', // removed: not a valid experimental property
+    serverComponentsExternalPackages: ['@supabase/supabase-js'],
   },
 }
 
