@@ -7,8 +7,13 @@ const nextConfig: NextConfig = {
   },
   serverExternalPackages: ['@supabase/supabase-js'],
   images: {
-    domains: ['zassisqhrdzckhiklublj.supabase.co'],
     remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'zassisqhrdzckhiklublj.supabase.co',
+        port: '',
+        pathname: '/**',
+      },
       {
         protocol: 'https',
         hostname: 'www.youtube.com',
@@ -31,15 +36,7 @@ const nextConfig: NextConfig = {
   },
   outputFileTracingRoot: path.join(__dirname),
   experimental: {
-    // Configuraciones para mejorar el manejo de archivos grandes
-    serverComponentsExternalPackages: ['@supabase/supabase-js'],
-  },
-  // Configurar límites para uploads
-  api: {
-    bodyParser: {
-      sizeLimit: '500mb', // Aumentar límite de tamaño
-    },
-    responseLimit: false,
+    // middlewareClientMaxBodySize: '500mb', // removed: not a valid experimental property
   },
 }
 
