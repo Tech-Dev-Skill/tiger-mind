@@ -31,8 +31,16 @@ const nextConfig: NextConfig = {
   },
   outputFileTracingRoot: path.join(__dirname),
   experimental: {
-    // Deja solo lo necesario
-  }
+    // Configuraciones para mejorar el manejo de archivos grandes
+    serverComponentsExternalPackages: ['@supabase/supabase-js'],
+  },
+  // Configurar límites para uploads
+  api: {
+    bodyParser: {
+      sizeLimit: '500mb', // Aumentar límite de tamaño
+    },
+    responseLimit: false,
+  },
 }
 
 export default nextConfig

@@ -169,7 +169,7 @@ export default function VideoUploadForm({ courseId, modules }: Props) {
           className="mt-1 block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-gray-700 file:text-orange-400 hover:file:bg-gray-600 disabled:opacity-50"
         />
         <p className="mt-2 text-sm text-gray-400">
-          Formatos permitidos: MP4, MKV, AVI, WebM, MOV. Tamaño máximo: 100MB
+          Formatos permitidos: MP4, MKV, AVI, WebM, MOV. Tamaño máximo: 500MB
         </p>
       </div>
 

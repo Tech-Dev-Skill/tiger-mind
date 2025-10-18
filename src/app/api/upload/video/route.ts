@@ -12,6 +12,9 @@ export const config = {
   },
 }
 
+// Configurar timeout más largo para uploads
+export const maxDuration = 300 // 5 minutos
+
 async function createServerSupabaseClient() {
   const cookieStore = await cookies()
   return createServerClient(
@@ -73,10 +76,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Tipo de archivo no permitido' }, { status: 400 })
     }
 
-    // Limitar tamaño (100MB)
-    const maxSize = 100 * 1024 * 1024 // 100MB
+    // Limitar tamaño (500MB para producción)
+    const maxSize = 500 * 1024 * 1024 // 500MB
     if (file.size > maxSize) {
-      return NextResponse.json({ error: 'El archivo excede el tamaño máximo de 100MB' }, { status: 400 })
+      return NextResponse.json({ error: 'El archivo excede el tamaño máximo de 500MB' }, { status: 400 })
     }
 
     // Crear directorio si no existe
