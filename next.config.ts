@@ -12,7 +12,8 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'zassisqhrdzckhiklublj.supabase.co',
         port: '',
-        pathname: '/**',
+        // AJUSTE: Más específico para la ruta de storage de Supabase
+        pathname: '/storage/v1/object/public/**', 
       },
       {
         protocol: 'https',
@@ -27,7 +28,7 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
       {
-        protocol: 'https',
+        protocol: 'https' ,
         hostname: 'i.ytimg.com',
         port: '',
         pathname: '/**',

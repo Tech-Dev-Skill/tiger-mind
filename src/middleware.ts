@@ -19,16 +19,6 @@ export async function middleware(request: NextRequest) {
     return response
   }
 
-  // Rutas públicas que no requieren autenticación
-  const publicPaths = ['/', '/landing', '/login']
-  const isPublicPath = publicPaths.some(path => 
-    request.nextUrl.pathname === path || request.nextUrl.pathname.startsWith(path + '/')
-  )
-
-  if (isPublicPath) {
-    return response
-  }
-
   const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
     cookies: {
       get(name: string) {
@@ -55,36 +45,46 @@ export async function middleware(request: NextRequest) {
     },
   })
 
-  try {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
+  // --- INICIO DE CAMBIOS ---
 
-    if (request.nextUrl.pathname.startsWith('/admin')) {
-      if (!user) {
-        return NextResponse.redirect(new URL('/login', request.url))
-      }
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', user.id)
-        .single()
-      if (!profile || !['admin', 'super_admin'].includes(profile.role)) {
-        return NextResponse.redirect(new URL('/dashboard', request.url))
-      }
-    }
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
 
-    if (request.nextUrl.pathname.startsWith('/dashboard') && !user) {
-      return NextResponse.redirect(new URL('/login', request.url))
-    }
+  // Rutas públicas que no requieren autenticación
+  // (La raíz '/' se maneja por separado para no coincidir con todas las rutas)
+  const publicPaths = ['/landing', '/login']
+  const isPublic =
+    request.nextUrl.pathname === '/' ||
+    publicPaths.some((path) => request.nextUrl.pathname.startsWith(path))
 
-    if (request.nextUrl.pathname.startsWith('/student') && !user) {
-      return NextResponse.redirect(new URL('/login', request.url))
-    }
-
-  } catch (error) {
-    console.error('Supabase middleware error:', error)
+  if (isPublic) {
+    return response // Permitir acceso a rutas públicas, pero con la sesión ya refrescada
   }
+
+  // Si no hay usuario y la ruta NO es pública, redirigir a login
+  if (!user) {
+    return NextResponse.redirect(new URL('/login', request.url))
+  }
+
+  // Lógica de roles para /admin
+  if (request.nextUrl.pathname.startsWith('/admin')) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+
+    if (!profile || !['admin', 'super_admin'].includes(profile.role)) {
+      return NextResponse.redirect(new URL('/dashboard', request.url))
+    }
+  }
+
+  // Para las demás rutas protegidas (/dashboard, /student, etc.)
+  // ya hemos comprobado que el 'user' existe.
+  // Si no se necesita lógica de roles adicional, no se hace nada más.
+
+  // --- FIN DE CAMBIOS ---
 
   return response
 }

@@ -1,120 +1,136 @@
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
+// src/lib/auth-helpers.ts
+'use server';
 
-async function createServerSupabaseClient() {
-  const cookieStore = await cookies()
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll()
-        },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) => {
-              cookieStore.set(name, value, options)
-            })
-          } catch (error) {
-            console.error('Error setting cookies:', error)
-          }
-        },
-      },
-    }
-  )
+import { redirect } from 'next/navigation';
+import {
+  createClientForServerComponent,
+  createClientForServerAction
+} from '@/lib/server';
+
+// =============================================
+// TIPOS COMPARTIDOS
+// =============================================
+
+// Se define un tipo explícito para el estado de los formularios de autenticación
+export interface AuthFormState {
+  error?: string | null;
+  message?: string | null;
 }
+
+// =============================================
+// FUNCIONES DE AYUDA (SOLO LECTURA)
+// =============================================
 
 export async function getUser() {
-  const supabase = await createServerSupabaseClient()
-
+  const supabase = await createClientForServerComponent();
   try {
-    const { data: { user } } = await supabase.auth.getUser()
-    return user
+    const { data: { user } } = await supabase.auth.getUser();
+    return user;
   } catch (error) {
-    console.error('Error getting user:', error)
-    return null
+    console.error('Error getting user:', error);
+    return null;
   }
 }
 
-export async function signOut() {
-  const supabase = await createServerSupabaseClient()
-
-  const { error } = await supabase.auth.signOut()
-  return { error }
-}
-
+// ... (las otras funciones de solo lectura como getSession, getUserProfile se mantienen igual)
 export async function getSession() {
-  const supabase = await createServerSupabaseClient()
-
-  try {
-    const { data: { session } } = await supabase.auth.getSession()
-    return session
-  } catch (error) {
-    console.error('Error getting session:', error)
-    return null
-  }
-}
-
-export async function requireAuth() {
-  const user = await getUser()
-  if (!user) {
-    throw new Error('No autorizado')
-  }
-  return user
+    const supabase = await createClientForServerComponent();
+    try {
+        const { data: { session } } = await supabase.auth.getSession();
+        return session;
+    } catch (error) {
+        console.error('Error getting session:', error);
+        return null;
+    }
 }
 
 export async function getUserProfile(userId: string) {
-  const supabase = await createServerSupabaseClient()
-
-  try {
-    console.log('Getting profile for user:', userId)
-    
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('id, email, full_name, phone, country, avatar_url, created_at, updated_at, role')
-      .eq('id', userId)
-      .single()
-
-    if (error) {
-      console.error('Error getting user profile:', error)
-      console.error('Error code:', error.code)
-      console.error('Error message:', error.message)
-      
-      // Si el perfil no existe, intentar crearlo
-      if (error.code === 'PGRST116' || error.message?.includes('No rows found')) {
-        console.log('Profile not found, attempting to create...')
-        
-        const { data: userData } = await supabase.auth.getUser()
-        if (userData.user) {
-          const { data: newProfile, error: createError } = await supabase
+    const supabase = await createClientForServerComponent();
+    try {
+        const { data, error } = await supabase
             .from('profiles')
-            .insert({
-              id: userData.user.id,
-              email: userData.user.email,
-              full_name: userData.user.user_metadata?.full_name || userData.user.user_metadata?.name || userData.user.email?.split('@')[0] || 'Estudiante',
-              role: 'student'
-            })
             .select('id, email, full_name, phone, country, avatar_url, created_at, updated_at, role')
-            .single()
+            .eq('id', userId)
+            .single();
 
-          if (createError) {
-            console.error('Error creating profile:', createError)
-            return null
-          }
-          
-          console.log('Profile created successfully:', newProfile)
-          return newProfile
+        if (error) {
+            console.error('Error getting user profile:', error.message);
+            return null;
         }
-      }
-      
-      return null
+        return data;
+    } catch (error) {
+        console.error('Exception in getUserProfile:', error);
+        return null;
     }
+}
 
-    console.log('Profile found:', data)
-    return data
-  } catch (error) {
-    console.error('Exception in getUserProfile:', error)
-    return null
+// =============================================
+// SERVER ACTIONS (LECTURA Y ESCRITURA)
+// =============================================
+
+export async function signOut() {
+  const supabase = await createClientForServerAction();
+  await supabase.auth.signOut();
+  redirect('/login');
+}
+
+export async function signInAction(prevState: AuthFormState, formData: FormData): Promise<AuthFormState> {
+  const supabase = await createClientForServerAction();
+
+  const email = formData.get('email') as string;
+  const password = formData.get('password') as string;
+
+  if (!email || !password) {
+    return { error: 'El email y la contraseña son obligatorios.' };
   }
+
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+  if (error) {
+    return { error: 'Credenciales inválidas. Por favor, inténtalo de nuevo.' };
+  }
+
+  if (data.user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', data.user.id)
+      .single();
+
+    if (profile?.role === 'admin' || profile?.role === 'super_admin') {
+      redirect('/admin');
+    } else {
+      redirect('/student');
+    }
+  }
+  
+  return { error: 'Un error inesperado ocurrió.' };
+}
+
+export async function signUpAction(prevState: AuthFormState, formData: FormData): Promise<AuthFormState> {
+  const supabase = await createClientForServerAction();
+
+  const email = formData.get('email') as string;
+  const password = formData.get('password') as string;
+  const fullName = formData.get('fullName') as string;
+
+  if (!email || !password || !fullName) {
+    return { error: 'Todos los campos son obligatorios.' };
+  }
+  
+  if (password.length < 6) {
+    return { error: 'La contraseña debe tener al menos 6 caracteres.' };
+  }
+
+  const { error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: { data: { full_name: fullName } },
+  });
+
+  if (error) {
+    return { error: 'No se pudo crear la cuenta: ' + error.message };
+  }
+
+  return { message: '¡Registro exitoso! Revisa tu email para confirmar tu cuenta.' };
 }
