@@ -45,15 +45,15 @@ export async function middleware(request: NextRequest) {
     },
   })
 
-  // --- INICIO DE CAMBIOS ---
-
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // Rutas públicas que no requieren autenticación
-  // (La raíz '/' se maneja por separado para no coincidir con todas las rutas)
-  const publicPaths = ['/landing', '/login']
+  // --- INICIO DE LA ACTUALIZACIÓN ---
+  // Se añade '/checkout' a la lista de rutas públicas.
+  const publicPaths = ['/landing', '/login', '/checkout']
+  // --- FIN DE LA ACTUALIZACIÓN ---
+
   const isPublic =
     request.nextUrl.pathname === '/' ||
     publicPaths.some((path) => request.nextUrl.pathname.startsWith(path))
@@ -79,12 +79,6 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/dashboard', request.url))
     }
   }
-
-  // Para las demás rutas protegidas (/dashboard, /student, etc.)
-  // ya hemos comprobado que el 'user' existe.
-  // Si no se necesita lógica de roles adicional, no se hace nada más.
-
-  // --- FIN DE CAMBIOS ---
 
   return response
 }

@@ -3,40 +3,21 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
-// --- ÍCONOS SVG FIELES A LAS MARCAS (MONOCROMÁTICOS) ---
-const InstagramIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.85s-.012 3.584-.07 4.85c-.148 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07s-3.584-.012-4.85-.07c-3.252-.148-4.771-1.691-4.919-4.919-.058-1.265-.069-1.645-.069-4.85s.012-3.584.07-4.85c.148-3.225 1.664-4.771 4.919-4.919C8.416 2.175 8.796 2.163 12 2.163zm0 2.163c-3.072 0-3.442.012-4.65.067-2.181.1-3.391 1.309-3.49 3.49-.055 1.208-.067 1.578-.067 4.65s.012 3.442.067 4.65c.1 2.181 1.309 3.391 3.49 3.49 1.208.055 1.578.067 4.65.067s3.442-.012 4.65-.067c2.181-.1 3.391-1.309 3.49-3.49.055-1.208.067-1.578.067-4.65s-.012-3.442-.067-4.65c-.1-2.181-1.309-3.391-3.49-3.49-1.208-.055-1.578-.067-4.65-.067zM12 8.25c-2.404 0-4.35 1.946-4.35 4.35s1.946 4.35 4.35 4.35 4.35-1.946 4.35-4.35S14.404 8.25 12 8.25zm0 2.163c1.207 0 2.188.981 2.188 2.188s-.981 2.188-2.188 2.188-2.188-.981-2.188-2.188.981-2.188 2.188-2.188zm4.59-4.864c-.596 0-1.077.481-1.077 1.077s.481 1.077 1.077 1.077 1.077-.481 1.077-1.077-.481-1.077-1.077-1.077z"/>
-    </svg>
-);
-const TiktokIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-2.43.05-4.86-.95-6.69-2.81-1.77-1.8-2.5-4.14-2.4-6.51.09-2.22 1.04-4.18 2.4-5.65 1.54-1.63 3.6-2.57 5.72-2.61.01 2.17-.01 4.33.01 6.5.61.12 1.21.28 1.79.52.48.19.98.37 1.45.61v-8.4z"/>
-  </svg>
-);
-const FacebookIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.879V14.89h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v7.028C18.343 21.128 22 16.991 22 12z"/>
-    </svg>
-);
-const YoutubeIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
-  </svg>
-);
-const WhatsAppIcon = ({ className = '' }: { className?: string }) => (
-    <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.487 5.235 3.487 8.413 0 6.557-5.338 11.892-11.894 11.892-1.99-.001-3.956-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.886-.001 2.269.655 4.357 1.849 6.069l-.299 1.098-1.188 4.359 4.493-1.176z"/>
-    </svg>
-);
-
+// --- SE IMPORTAN LOS ÍCONOS DE FONT AWESOME ---
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { 
+  faInstagram, 
+  faTiktok, 
+  faFacebook, 
+  faYoutube, 
+  faWhatsapp 
+} from '@fortawesome/free-brands-svg-icons'
 
 export default function TigermindLanding() {
   const whatsappLink = "https://wa.me/573112624924";
 
   return (
     <div className="min-h-screen bg-black text-white">
-      {/* Header */}
       <header className="fixed top-0 right-0 z-50 p-4">
         <Link 
           href="/login" 
@@ -80,6 +61,7 @@ export default function TigermindLanding() {
             </div>
           </div>
 
+          {/* --- BOTÓN ACTUALIZADO PARA SCROLL --- */}
           <Link 
             href="#section-1717153620576" 
             className="inline-block px-12 py-4 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-full text-xl uppercase tracking-wide transition-colors duration-300"
@@ -151,6 +133,7 @@ export default function TigermindLanding() {
           </div>
 
           <div className="text-center">
+            {/* --- BOTÓN ACTUALIZADO PARA SCROLL --- */}
             <Link 
               href="#section-1717153620576" 
               className="inline-block px-12 py-4 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-full text-xl uppercase tracking-wide transition-colors duration-300"
@@ -259,6 +242,7 @@ export default function TigermindLanding() {
                   Todo lo demás lo construimos juntos.
                 </h4><br/>
               
+              {/* --- BOTÓN ACTUALIZADO PARA SCROLL --- */}
               <Link 
                 href="#section-1717153620576" 
                 className="inline-block px-12 py-4 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-full text-xl uppercase tracking-wide transition-colors duration-300"
@@ -422,6 +406,7 @@ export default function TigermindLanding() {
         </div>
       </section>
 
+      {/* Pricing Section (ESTA ES LA SECCIÓN OBJETIVO) */}
       <section id="section-1717153620576" className="pb-20 px-4 bg-black text-white">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
@@ -450,37 +435,35 @@ export default function TigermindLanding() {
                 <p>✅ Aprende a alimentarte</p>
             </div>
 
-            <a 
-              href="https://pay.hotmart.com/F99678281P?checkoutMode=10" 
-              target="_blank" 
-              rel="noopener noreferrer"
+            {/* --- ESTE ES EL ÚNICO BOTÓN QUE VA A /checkout --- */}
+            <Link 
+              href="/checkout" 
               className="inline-block w-full px-8 py-4 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-full text-lg uppercase tracking-wide transition-colors duration-300"
             >
               UNIRME A LA COMUNIDAD
-            </a>
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="py-12 px-4 bg-gray-900 text-center text-gray-400">
         <div className="max-w-6xl mx-auto">
           
-          <div className="flex justify-center items-center gap-6 mt-8">
+          <div className="flex justify-center items-center gap-6 text-2xl mt-8">
+            <a href="https://wa.me/573112624924" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-orange-500 transition-colors duration-300 transform hover:scale-110">
+              <FontAwesomeIcon icon={faWhatsapp} />
+            </a>
             <a href="https://www.instagram.com/nixonsil15?igsh=ZmQ2NThwN2Q1dm45&utm_source=qr" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-orange-500 transition-colors duration-300 transform hover:scale-110">
-              <InstagramIcon />
+              <FontAwesomeIcon icon={faInstagram} />
             </a>
             <a href="https://www.tiktok.com/@nixonsil?_t=ZS-90CebTvaAv1&_r=1" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-orange-500 transition-colors duration-300 transform hover:scale-110">
-              <TiktokIcon />
+              <FontAwesomeIcon icon={faTiktok} />
             </a>
             <a href="https://www.facebook.com/share/1E4p4Vf1Lh/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-orange-500 transition-colors duration-300 transform hover:scale-110">
-              <FacebookIcon />
+              <FontAwesomeIcon icon={faFacebook} />
             </a>
             <a href="https://youtube.com/@nixonsil1501?si=OD0ksRNmVM61cS9z" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-orange-500 transition-colors duration-300 transform hover:scale-110">
-              <YoutubeIcon />
-            </a>
-            <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-orange-500 transition-colors duration-300 transform hover:scale-110">
-              <WhatsAppIcon />
+              <FontAwesomeIcon icon={faYoutube} />
             </a>
           </div>
 
@@ -503,10 +486,10 @@ export default function TigermindLanding() {
         href={whatsappLink}
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 z-50 bg-orange-600 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:bg-orange-700 transition-all duration-300"
+        className="fixed bottom-6 right-6 z-50 bg-orange-600 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:bg-orange-700 transition-all duration-300 text-3xl"
         aria-label="Contactar por WhatsApp"
       >
-        <WhatsAppIcon className="w-8 h-8" />
+        <FontAwesomeIcon icon={faWhatsapp} />
       </a>
 
     </div>
