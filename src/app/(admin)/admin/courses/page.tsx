@@ -47,7 +47,9 @@ export default async function AdminCoursesPage() {
     <div className="min-h-screen bg-gray-900 text-white">
       <header className="bg-gray-800 border-b border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center">
+          
           <h1 className="text-2xl font-bold">Gestionar Curso</h1>
+          <a className="text-white hover:text-orange-500" href="/admin">← Volver al Dashboard</a>
           {courseCount === 0 && (
             <Link href="/admin/courses/new" className="flex items-center space-x-2 px-4 py-2 bg-green-600 rounded-lg hover:bg-green-700">
               <PlusCircle className="w-4 h-4" />

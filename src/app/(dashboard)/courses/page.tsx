@@ -5,9 +5,6 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 
-// --- INICIO DE LA CORRECCIÓN ---
-
-// Se ajusta el tipo para que 'categories' sea un array de objetos
 type Category = {
   name: string;
 };
@@ -20,12 +17,8 @@ type Course = {
   description: string | null;
   thumbnail_url: string | null;
   price: number;
-  // La propiedad 'categories' ahora es un array de 'Category'
-  categories: Category[]; 
+  categories: Category[];
 };
-
-// --- FIN DE LA CORRECCIÓN ---
-
 
 export default async function CoursesPage() {
   const supabase = await createClientForServerComponent();
@@ -35,6 +28,41 @@ export default async function CoursesPage() {
     redirect('/login');
   }
 
+  // 🔹 Obtener el perfil del usuario
+  const { data: profile, error: profileError } = await supabase
+    .from('profiles')
+    .select('is_active')
+    .eq('id', user.id)
+    .single();
+
+  if (profileError) {
+    console.error('Error obteniendo perfil:', profileError);
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center text-white">
+        Error al cargar la información del perfil.
+      </div>
+    );
+  }
+
+  // 🔸 Si el usuario no tiene suscripción activa
+  if (!profile?.is_active) {
+    return (
+      <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-center text-white">
+        <h1 className="text-3xl font-bold mb-4">Suscripción Inactiva</h1>
+        <p className="text-gray-300 mb-6 text-center max-w-md">
+          Tu cuenta no tiene una suscripción activa. Suscríbete para acceder a todos los cursos de Tiger Mind.
+        </p>
+        <Link
+          href="/suscripcion"
+          className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
+        >
+          Suscribirse
+        </Link>
+      </div>
+    );
+  }
+
+  // 🔹 Si el usuario está activo, cargar todos los cursos publicados
   const { data: courses, error } = await supabase
     .from('courses')
     .select('id, slug, title, short_description, description, thumbnail_url, price, categories(name)')
@@ -73,9 +101,7 @@ export default async function CoursesPage() {
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold mb-4">
-              Cursos Disponibles
-            </h2>
+            <h2 className="text-3xl font-bold mb-4">Cursos Disponibles</h2>
             <p className="text-gray-300">
               Accede a todos los cursos de tu membresía Tiger Mind
             </p>
@@ -132,7 +158,6 @@ export default async function CoursesPage() {
                         ${course.price}
                       </span>
                       <span className="text-xs bg-gray-700 px-2 py-1 rounded-full">
-                        {/* Se ajusta para leer el primer elemento del array de categorías */}
                         {course.categories?.[0]?.name || 'General'}
                       </span>
                     </div>

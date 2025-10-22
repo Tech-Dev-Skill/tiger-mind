@@ -1,17 +1,16 @@
-// src/app/(dashboard)/student/page.tsx
+'use client'
 
-import { createClientForServerComponent } from '@/lib/server';
-import { redirect } from 'next/navigation';
-import Link from 'next/link';
-import Image from 'next/image';
-import { signOut } from '@/lib/auth-helpers';
+import { useEffect, useState } from 'react'
+import { createClient } from '@/lib/client'
+import { redirect } from 'next/navigation'
+import Link from 'next/link'
+import Image from 'next/image'
+import { signOut } from '@/lib/auth-helpers'
 
-// --- INICIO DE LA CORRECCIÓN ---
-
-// PASO 1: Definimos los tipos para que TypeScript sepa qué esperar.
+// --- Tipos ---
 type Category = {
   name: string;
-} | null; // La categoría puede ser nula
+} | null;
 
 type Course = {
   id: string;
@@ -26,141 +25,154 @@ type Course = {
   categories: Category;
 };
 
-// --- FIN DE LA CORRECCIÓN ---
+type Profile = {
+  id: string;
+  full_name: string | null;
+  email: string | null;
+  is_active?: boolean;
+  activation_date?: string | null;
+  expiration_date?: string | null;
+};
 
+type Subscription = {
+  id: string;
+  user_id: string;
+  status: string;
+  start_date?: string | null;
+  end_date?: string | null;
+};
 
-async function getStudentData(userId: string) {
-  const supabase = await createClientForServerComponent();
+type Video = {
+  id: string;
+  title: string;
+  video_url: string;
+  course_id: string;
+};
 
-  const [profile, subscriptions, courses] = await Promise.all([
-    supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .single(),
+export default function StudentDashboard() {
+  const [profile, setProfile] = useState<Profile | null>(null)
+  const [subscription, setSubscription] = useState<Subscription | null>(null)
+  const [courses, setCourses] = useState<Course[]>([])
+  const [videos, setVideos] = useState<Video[]>([])
+  const [loading, setLoading] = useState(true)
 
-    supabase
-      .from('subscriptions')
-      .select('*, subscription_plans(*)')
-      .eq('user_id', userId)
-      .single(),
+  const supabase = createClient()
 
-    supabase
-      .from('courses')
-      .select('*, categories(*)')
-      .eq('is_published', true)
-      .order('created_at', { ascending: false })
-  ]);
+  useEffect(() => {
+    const fetchData = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) {
+        redirect('/login')
+        return
+      }
 
-  return {
-    profile: profile.data,
-    subscription: subscriptions.data,
-    // Le decimos a TypeScript que 'courses.data' es un array de 'Course'
-    courses: (courses.data as Course[]) || []
-  };
-}
+      const [profileRes, subscriptionRes, coursesRes] = await Promise.all([
+        supabase.from('profiles').select('*').eq('id', user.id).single(),
+        supabase.from('subscriptions').select('*, subscription_plans(*)').eq('user_id', user.id).single(),
+        supabase.from('courses').select('*, categories(*)').eq('is_published', true).order('created_at', { ascending: false })
+      ])
 
-export default async function StudentDashboard() {
-  const supabase = await createClientForServerComponent();
-  const { data: { user } } = await supabase.auth.getUser();
+      setProfile(profileRes.data)
+      setSubscription(subscriptionRes.data)
+      setCourses(coursesRes.data || [])
 
-  if (!user) {
-    redirect('/login');
-  }
-  
-  const { profile, subscription, courses } = await getStudentData(user.id);
+      // Si el usuario está activo, traemos los videos
+      if (profileRes.data?.is_active) {
+        const { data: videosData } = await supabase.from('course_videos').select('*')
+        setVideos(videosData || [])
+      }
 
-  if (!profile) {
-    console.error("Profile not found for user:", user.id);
-    return <div>Error al cargar el perfil. Si el problema persiste, contacta a soporte.</div>;
-  }
+      setLoading(false)
+    }
 
-  const hasActiveSubscription = subscription && subscription.status === 'active' &&
-    new Date(subscription.end_date) > new Date();
+    fetchData()
+  }, [])
+
+  if (loading) return <div className="p-8 text-center">Cargando...</div>
+  if (!profile) return <div className="p-8 text-center text-red-500">Error al cargar el perfil.</div>
+
+  const hasActiveSubscription =
+    subscription &&
+    subscription.status === 'active' &&
+    subscription.end_date &&
+    new Date(subscription.end_date) > new Date()
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header (sin cambios) */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">
-                ¡Hola, {profile?.full_name || user.email || 'Estudiante'}! 👋
-              </h1>
-              <p className="text-gray-600 mt-2">
-                Bienvenido a tu panel de estudiante
-              </p>
-            </div>
-            <div className="flex items-center space-x-4">
-               {/* ... (contenido del header sin cambios) ... */}
-            </div>
+        {/* Header */}
+        <div className="bg-white rounded-lg shadow-sm p-6 mb-6 flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">
+              ¡Hola, {profile.full_name || profile.email || 'Estudiante'}! 👋
+            </h1>
+            <p className="text-gray-600 mt-2">Bienvenido a tu panel de estudiante</p>
+          </div>
+          <button
+            onClick={async () => {
+              await signOut()
+              window.location.href = '/login'
+            }}
+            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition"
+          >
+            Cerrar sesión
+          </button>
+        </div>
+
+        {/* Clase gratuita */}
+        <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">Clase gratuita</h2>
+          <div className="aspect-video rounded-lg overflow-hidden shadow-md">
+            <iframe
+              width="100%"
+              height="100%"
+              src="https://www.youtube.com/embed/QkR1_hVlBcQ"
+              title="Clase gratuita"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            ></iframe>
           </div>
         </div>
 
-        {/* Quick Actions (sin cambios) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-           {/* ... (contenido de quick actions sin cambios) ... */}
-        </div>
-
-        {/* My Active Courses */}
+        {/* Mis cursos activos */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">Mis Cursos Activos</h2>
 
-          {hasActiveSubscription ? (
-            courses.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {/* Ahora TypeScript sabe que 'course' es de tipo 'Course' */}
-                {courses.map((course) => (
-                  <Link
-                    key={course.id}
-                    href={`/student/courses/${course.slug}`}
-                    className="bg-gray-50 rounded-lg overflow-hidden hover:shadow-md transition-shadow flex flex-col h-full"
-                  >
-                    {course.thumbnail_url ? (
-                      <div className="relative w-full h-40">
-                        <Image
-                          src={course.thumbnail_url}
-                          alt={course.title || 'Thumbnail del curso'}
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                    ) : (
-                      <div className="w-full h-40 bg-gray-200 flex items-center justify-center">
-                        {/* Placeholder SVG */}
-                      </div>
-                    )}
-
-                    <div className="p-4 flex-grow">
-                      <h3 className="text-lg font-medium text-gray-900 mb-2">{course.title}</h3>
-                      <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                        {course.short_description || course.description}
-                      </p>
-                      <div className="mt-auto">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                          {course.categories?.name || 'General'}
-                        </span>
-                      </div>
+          {profile.is_active ? (
+            // --- Si el usuario está activo, mostramos los videos ---
+            videos.length > 0 ? (
+              <div className="space-y-6">
+                {videos.map((video) => (
+                  <div key={video.id} className="border rounded-lg p-4 bg-gray-50">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-2">{video.title}</h3>
+                    <div className="aspect-video rounded-lg overflow-hidden shadow">
+                      <iframe
+                        width="100%"
+                        height="100%"
+                        src={video.video_url}
+                        title={video.title}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      ></iframe>
                     </div>
-                  </Link>
+                  </div>
                 ))}
               </div>
             ) : (
-              <div className="text-center py-8">
-                <p className="text-gray-600">No hay cursos disponibles en este momento.</p>
-              </div>
+              <p className="text-gray-600">Aún no hay videos disponibles.</p>
             )
           ) : (
-            <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4">
-              {/* ... (mensaje de suscripción inactiva) ... */}
+            // --- Si el usuario NO está activo ---
+            <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 text-gray-700">
+              <p className="mb-3">Actualmente no tienes una suscripción activa.</p>
+              <Link
+                href="/checkout"
+                className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition"
+              >
+                Suscribirse
+              </Link>
             </div>
           )}
-        </div>
-
-        {/* Available Courses (se beneficia de la misma corrección) */}
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          {/* ... (resto del código) ... */}
         </div>
       </div>
     </div>

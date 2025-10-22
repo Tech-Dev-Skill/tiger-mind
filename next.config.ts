@@ -6,14 +6,14 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   serverExternalPackages: ['@supabase/supabase-js'],
+
   images: {
     remotePatterns: [
       {
         protocol: 'https',
         hostname: 'zassisqhrdzckhiklublj.supabase.co',
         port: '',
-        // AJUSTE: Más específico para la ruta de storage de Supabase
-        pathname: '/storage/v1/object/public/**', 
+        pathname: '/storage/v1/object/public/**',
       },
       {
         protocol: 'https',
@@ -28,18 +28,25 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
       {
-        protocol: 'https' ,
+        protocol: 'https',
         hostname: 'i.ytimg.com',
         port: '',
         pathname: '/**',
-      }
+      },
     ],
   },
+
   outputFileTracingRoot: path.join(__dirname),
+
   experimental: {
     serverComponentsExternalPackages: ['@supabase/supabase-js'],
+
+    // 👇 Aumenta el límite de tamaño del cuerpo para Server Actions
+    serverActions: {
+      bodySizeLimit: '100mb',
+    },
   },
-  // Configuración para servir archivos estáticos grandes
+
   async headers() {
     return [
       {
