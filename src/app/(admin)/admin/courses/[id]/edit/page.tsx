@@ -12,7 +12,7 @@ interface EditCoursePageProps {
 }
 
 export default async function EditCoursePage({ params }: EditCoursePageProps) {
-  const { id } = params;
+  const { id } = await params;
   const supabase = await createClientForServerComponent();
 
   // Cargamos los datos del curso y las categorías al mismo tiempo
@@ -45,7 +45,7 @@ export default async function EditCoursePage({ params }: EditCoursePageProps) {
         </div>
       </header>
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <EditCourseForm course={course} categories={categories || []} />
+        <EditCourseForm course={course}/>
       </div>
     </div>
   );

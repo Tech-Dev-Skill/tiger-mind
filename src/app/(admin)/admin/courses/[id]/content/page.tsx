@@ -27,7 +27,7 @@ type CourseWithContent = {
 
 export default async function CourseContentPage({ params }: ContentPageProps) {
     const supabase = await createClientForServerComponent();
-    const courseId = params.id;
+    const courseId = (await params).id;
 
     const { data, error } = await supabase
         .from('courses')

@@ -12,7 +12,7 @@ interface EditUserPageProps {
 }
 
 export default async function EditUserPage({ params }: EditUserPageProps) {
-  const { id } = params;
+  const { id } = await params;
   const supabase = await createClientForServerComponent();
 
   // Verificamos si el administrador está logueado
