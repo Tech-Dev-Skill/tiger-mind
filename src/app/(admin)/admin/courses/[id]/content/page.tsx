@@ -8,9 +8,9 @@ import { PlusCircle, Edit3, Trash2, Video } from "lucide-react";
 import { deleteVideoAction } from '../../actions';
 
 interface ContentPageProps {
-    params: {
+    params: Promise<{
         id: string;
-    };
+    }>;
 }
 
 type Video = {

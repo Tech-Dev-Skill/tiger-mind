@@ -39,8 +39,6 @@ const nextConfig: NextConfig = {
   outputFileTracingRoot: path.join(__dirname),
 
   experimental: {
-    serverComponentsExternalPackages: ['@supabase/supabase-js'],
-
     // 👇 Aumenta el límite de tamaño del cuerpo para Server Actions
     serverActions: {
       bodySizeLimit: '100mb',

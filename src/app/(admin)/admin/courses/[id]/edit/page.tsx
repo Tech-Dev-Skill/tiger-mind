@@ -6,9 +6,9 @@ import Link from 'next/link';
 import EditCourseForm from './edit-form'; // Importamos el nuevo formulario
 
 interface EditCoursePageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default async function EditCoursePage({ params }: EditCoursePageProps) {

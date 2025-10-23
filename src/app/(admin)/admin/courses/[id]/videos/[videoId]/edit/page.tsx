@@ -6,10 +6,10 @@ import Link from "next/link";
 import EditVideoForm from "./edit-form"; // Importamos el formulario que crearemos a continuación
 
 interface EditVideoPageProps {
-  params: {
+  params: Promise<{
     id: string; // Este es el courseId
     videoId: string; // Este es el videoId
-  };
+  }>;
 }
 
 export default async function EditVideoPage({ params }: EditVideoPageProps) {
