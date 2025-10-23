@@ -1,11 +1,11 @@
-'use client'
+// src/app/(dashboard)/student/page.tsx
+'use client';
 
-import { useEffect, useState } from 'react'
-import { createClient } from '@/lib/client'
-import { redirect } from 'next/navigation'
-import Link from 'next/link'
-import Image from 'next/image'
-import { signOut } from '@/lib/auth-helpers'
+import { useEffect, useState } from 'react';
+import { createClient } from '@/lib/client';
+import { redirect } from 'next/navigation';
+import Link from 'next/link';
+import { signOut } from '@/lib/auth-helpers';
 
 // --- Tipos ---
 type Category = {
@@ -34,14 +34,6 @@ type Profile = {
   expiration_date?: string | null;
 };
 
-type Subscription = {
-  id: string;
-  user_id: string;
-  status: string;
-  start_date?: string | null;
-  end_date?: string | null;
-};
-
 type Video = {
   id: string;
   title: string;
@@ -50,52 +42,110 @@ type Video = {
 };
 
 export default function StudentDashboard() {
-  const [profile, setProfile] = useState<Profile | null>(null)
-  const [subscription, setSubscription] = useState<Subscription | null>(null)
-  const [courses, setCourses] = useState<Course[]>([])
-  const [videos, setVideos] = useState<Video[]>([])
-  const [loading, setLoading] = useState(true)
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [videos, setVideos] = useState<Video[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const supabase = createClient()
+  const supabase = createClient();
 
   useEffect(() => {
     const fetchData = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
+      const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        redirect('/login')
-        return
+        redirect('/login');
+        return;
       }
 
-      const [profileRes, subscriptionRes, coursesRes] = await Promise.all([
-        supabase.from('profiles').select('*').eq('id', user.id).single(),
-        supabase.from('subscriptions').select('*, subscription_plans(*)').eq('user_id', user.id).single(),
-        supabase.from('courses').select('*, categories(*)').eq('is_published', true).order('created_at', { ascending: false })
-      ])
+      // Traer perfil
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
 
-      setProfile(profileRes.data)
-      setSubscription(subscriptionRes.data)
-      setCourses(coursesRes.data || [])
+      setProfile(profileData || null);
 
-      // Si el usuario está activo, traemos los videos
-      if (profileRes.data?.is_active) {
-        const { data: videosData } = await supabase.from('course_videos').select('*')
-        setVideos(videosData || [])
+      // Si el usuario está activo → traer cursos y videos
+      if (profileData?.is_active) {
+        // Cursos publicados
+        const { data: coursesData } = await supabase
+          .from('courses')
+          .select('*')
+          .eq('is_published', true)
+          .order('created_at', { ascending: false });
+
+        setCourses(coursesData || []);
+
+        // Traer videos de la tabla "videos" que pertenezcan a esos cursos
+        if (coursesData && coursesData.length > 0) {
+          const courseIds = coursesData.map((c: Course) => c.id);
+          const { data: videosData } = await supabase
+            .from('videos')
+            .select('*')
+            .in('course_id', courseIds);
+
+          setVideos(videosData || []);
+        }
       }
 
-      setLoading(false)
+      setLoading(false);
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) return <div className="p-8 text-center">Cargando...</div>;
+  if (!profile) return <div className="p-8 text-center text-red-500">Error al cargar el perfil.</div>;
+
+  // Utilidades para limpiar / construir URLs de embed sin autoplay
+  const isYouTubeUrl = (url: string) => /youtube\.com|youtu\.be/.test(url);
+  const extractYouTubeId = (url: string) => {
+    try {
+      // Maneja varios formatos: watch?v=, youtu.be/, embed/
+      const u = new URL(url);
+      if (u.hostname.includes('youtu.be')) {
+        return u.pathname.slice(1);
+      }
+      if (u.pathname.includes('/embed/')) {
+        return u.pathname.split('/embed/')[1].split(/[?&]/)[0];
+      }
+      const v = u.searchParams.get('v');
+      return v;
+    } catch {
+      // fallback regex
+      const m = url.match(/(?:v=|\/embed\/|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
+      return m ? m[1] : null;
     }
+  };
 
-    fetchData()
-  }, [])
+  const isLocalVideoFile = (url: string) => {
+    if (!url) return false;
+    // Rutas locales como /videos/... o extensiones de vídeo
+    const lower = url.toLowerCase();
+    return lower.startsWith('/') || /\.(mp4|webm|ogg|mov|mkv)$/i.test(lower);
+  };
 
-  if (loading) return <div className="p-8 text-center">Cargando...</div>
-  if (!profile) return <div className="p-8 text-center text-red-500">Error al cargar el perfil.</div>
-
-  const hasActiveSubscription =
-    subscription &&
-    subscription.status === 'active' &&
-    subscription.end_date &&
-    new Date(subscription.end_date) > new Date()
+  const buildCleanEmbedUrl = (rawUrl: string) => {
+    if (!rawUrl) return '';
+    // Si es YouTube -> convertir a embed con autoplay=0
+    if (isYouTubeUrl(rawUrl)) {
+      const id = extractYouTubeId(rawUrl);
+      if (id) {
+        return `https://www.youtube.com/embed/${id}?autoplay=0&rel=0&modestbranding=1`;
+      }
+    }
+    // Para otros URLs (si ya tienen params) removemos autoplay
+    try {
+      const u = new URL(rawUrl);
+      u.searchParams.delete('autoplay');
+      // No añadir autoplay=0 explícito para otros hosts (la ausencia de autoplay evita reproducir)
+      return u.toString();
+    } catch {
+      // Si no es una URL válida (raro), devolvemos la original
+      return rawUrl;
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -110,8 +160,8 @@ export default function StudentDashboard() {
           </div>
           <button
             onClick={async () => {
-              await signOut()
-              window.location.href = '/login'
+              await signOut();
+              window.location.href = '/login';
             }}
             className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition"
           >
@@ -126,9 +176,9 @@ export default function StudentDashboard() {
             <iframe
               width="100%"
               height="100%"
-              src="https://www.youtube.com/embed/QkR1_hVlBcQ"
+              src="https://www.youtube.com/embed/QkR1_hVlBcQ?autoplay=0&rel=0&modestbranding=1"
               title="Clase gratuita"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             ></iframe>
           </div>
@@ -139,30 +189,74 @@ export default function StudentDashboard() {
           <h2 className="text-xl font-semibold text-gray-900 mb-4">Mis Cursos Activos</h2>
 
           {profile.is_active ? (
-            // --- Si el usuario está activo, mostramos los videos ---
-            videos.length > 0 ? (
-              <div className="space-y-6">
-                {videos.map((video) => (
-                  <div key={video.id} className="border rounded-lg p-4 bg-gray-50">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-2">{video.title}</h3>
-                    <div className="aspect-video rounded-lg overflow-hidden shadow">
-                      <iframe
-                        width="100%"
-                        height="100%"
-                        src={video.video_url}
-                        title={video.title}
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                      ></iframe>
+            courses.length > 0 ? (
+              <div className="space-y-10">
+                {courses.map((course) => (
+                  <div key={course.id} className="border rounded-lg p-4 bg-gray-50">
+                    <h3 className="text-2xl font-bold text-gray-800 mb-4">{course.title}</h3>
+                    <p className="text-gray-600 mb-4">{course.short_description || 'Sin descripción disponible.'}</p>
+
+                    {/* Videos del curso */}
+                    <div className="space-y-4">
+                      {videos.filter(v => v.course_id === course.id).length > 0 ? (
+                        videos
+                          .filter(v => v.course_id === course.id)
+                          .map(video => {
+                            const url = video.video_url || '';
+                            const isLocal = isLocalVideoFile(url);
+                            const isYT = isYouTubeUrl(url);
+
+                            return (
+                              <div key={video.id} className="border rounded-lg p-4 bg-white shadow">
+                                <h4 className="text-lg font-semibold text-gray-800 mb-2">{video.title}</h4>
+
+                                <div className="aspect-video rounded-lg overflow-hidden shadow">
+                                  {isLocal ? (
+                                    // Si es archivo local (mp4, webm, etc.) usamos <video controls>
+                                    <video
+                                      controls
+                                      preload="metadata"
+                                      src={url}
+                                      className="w-full h-full object-cover"
+                                    />
+                                  ) : isYT ? (
+                                    // Si es YouTube, construimos embed sin autoplay
+                                    <iframe
+                                      width="100%"
+                                      height="100%"
+                                      src={buildCleanEmbedUrl(url)}
+                                      title={video.title}
+                                      // no "allow=autoplay"
+                                      allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                      allowFullScreen
+                                    />
+                                  ) : (
+                                    // Otros iframes: limpiar params autoplay y renderizar en iframe
+                                    <iframe
+                                      width="100%"
+                                      height="100%"
+                                      src={buildCleanEmbedUrl(url)}
+                                      title={video.title}
+                                      allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                      allowFullScreen
+                                    />
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })
+                      ) : (
+                        <p className="text-gray-500 italic">Este curso aún no tiene videos disponibles.</p>
+                      )}
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-gray-600">Aún no hay videos disponibles.</p>
+              <p className="text-gray-600">No hay cursos activos disponibles.</p>
             )
           ) : (
-            // --- Si el usuario NO está activo ---
+            // Si el usuario NO está activo
             <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 text-gray-700">
               <p className="mb-3">Actualmente no tienes una suscripción activa.</p>
               <Link
@@ -176,5 +270,5 @@ export default function StudentDashboard() {
         </div>
       </div>
     </div>
-  )
+  );
 }

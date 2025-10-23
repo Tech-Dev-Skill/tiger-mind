@@ -2,101 +2,100 @@
 'use client';
 
 import { useState } from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { signInAction, signUpAction } from '@/lib/auth-helpers';
 import Link from 'next/link';
-import { signInAction, signUpAction } from '@/lib/auth-helpers'; // Se importan las nuevas acciones
 
-// Componente para el botón, para mostrar el estado de "pending"
-function AuthButton({ isSignUp }: { isSignUp: boolean }) {
-  const { pending } = useFormStatus();
-  return (
-    <button
-      type="submit"
-      disabled={pending}
-      className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 disabled:opacity-50"
-    >
-      {pending ? (
-        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-      ) : (
-        isSignUp ? 'Crear cuenta' : 'Iniciar sesión'
-      )}
-    </button>
-  );
+interface AuthFormState {
+  error?: string;
+  message?: string;
 }
 
 export default function LoginPage() {
   const [isSignUp, setIsSignUp] = useState(false);
+  const [formState, setFormState] = useState<AuthFormState>({});
 
-  // useFormState para manejar los errores y mensajes de las Server Actions
-  const [signInState, signInFormAction] = useFormState(signInAction, { error: null });
-  const [signUpState, signUpFormAction] = useFormState(signUpAction, { message: null, error: null });
-
-  const formState = isSignUp ? signUpState : signInState;
+  async function handleSubmit(formData: FormData) {
+    const action = isSignUp ? signUpAction : signInAction;
+    const result = await action({}, formData);
+    setFormState(result);
+  }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-black via-gray-900 to-orange-900">
-      <div className="max-w-md w-full space-y-8 px-4">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-white mb-2">
-            <Link href="/" className="text-gray-300 hover:text-white">Tiger Mind</Link>
-          </h1>
-          <h2 className="text-2xl font-bold text-orange-500">
-            {isSignUp ? 'Crea tu cuenta' : 'Bienvenido de vuelta'}
-          </h2>
-        </div>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-black via-gray-900 to-[#2b1400] text-white">
+      <div className="w-full max-w-sm bg-gray-900/80 p-8 rounded-2xl shadow-2xl border border-gray-800 backdrop-blur-md">
+        
+        {/* LOGO / NOMBRE */}
+        <Link
+          href="/"
+          className="block text-center text-3xl font-extrabold tracking-wide bg-gradient-to-r from-[#ff6a00] via-[#ff8800] to-[#ffa733] text-transparent bg-clip-text hover:opacity-90 transition leading-tight"
+        >
+          TigerMind
+        </Link>
 
-        <div className="bg-gray-900/50 backdrop-blur-sm py-8 px-6 shadow-2xl rounded-2xl border border-gray-800">
-          <form className="space-y-6" action={isSignUp ? signUpFormAction : signInFormAction}>
-            {isSignUp && (
-              <div>
-                <label htmlFor="fullName" className="block text-sm font-medium text-gray-300">Nombre completo</label>
-                <input id="fullName" name="fullName" type="text" required
-                  className="mt-1 block w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white"
-                  placeholder="Tu nombre completo"
-                />
-              </div>
-            )}
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-300">Email</label>
-              <input id="email" name="email" type="email" required
-                className="mt-1 block w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white"
-                placeholder="tu@email.com"
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-300">Contraseña</label>
-              <input id="password" name="password" type="password" required
-                className="mt-1 block w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white"
-                placeholder="••••••••"
-              />
-            </div>
+        {/* TÍTULO */}
+        <h1 className="text-lg mt-4 mb-2 text-center font-semibold text-[#ff8c1a] drop-shadow-md">
+          {isSignUp ? 'Crea tu cuenta' : 'Bienvenido de vuelta'}
+        </h1>
 
-            {formState?.error && (
-              <div className="text-red-400 text-sm text-center bg-red-900/50 p-2 rounded-md">
-                {formState.error}
-              </div>
-            )}
-            
-            {signUpState?.message && (
-              <div className="text-green-400 text-sm text-center bg-green-900/50 p-2 rounded-md">
-                {signUpState.message}
-              </div>
-            )}
+        {/* FORMULARIO */}
+        <form action={handleSubmit} className="flex flex-col gap-4 mt-4">
+          {isSignUp && (
+            <input
+              type="text"
+              name="fullName"
+              placeholder="Nombre completo"
+              required
+              className="p-2 bg-gray-800/70 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-[#ff7a1a] text-white placeholder-gray-400 transition"
+            />
+          )}
 
-            <div>
-              <AuthButton isSignUp={isSignUp} />
-            </div>
-          </form>
+          <input
+            type="email"
+            name="email"
+            placeholder="Correo electrónico"
+            required
+            className="p-2 bg-gray-800/70 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-[#ff7a1a] text-white placeholder-gray-400 transition"
+          />
 
-          <div className="text-center mt-6">
-            <button
-              type="button"
-              onClick={() => setIsSignUp(!isSignUp)}
-              className="text-sm text-gray-300 hover:text-white"
-            >
-              {isSignUp ? '¿Ya tienes cuenta? Inicia sesión' : '¿No tienes cuenta? Regístrate'}
-            </button>
+          <input
+            type="password"
+            name="password"
+            placeholder="Contraseña"
+            required
+            className="p-2 bg-gray-800/70 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-[#ff7a1a] text-white placeholder-gray-400 transition"
+          />
+
+          <button
+            type="submit"
+            className="mt-3 p-2 bg-gradient-to-r from-[#ff6a00] to-[#ff8800] hover:from-[#ff7a1a] hover:to-[#ff9e33] text-black font-bold rounded-md shadow-lg hover:shadow-[#ff8c1a]/40 transition-all duration-300"
+          >
+            {isSignUp ? 'Crear cuenta' : 'Iniciar sesión'}
+          </button>
+        </form>
+
+        {/* MENSAJES */}
+        {formState.error && (
+          <div className="text-red-400 text-sm mt-3 text-center bg-red-900/40 p-2 rounded-md border border-red-800 shadow-md">
+            {formState.error}
           </div>
+        )}
+
+        {formState.message && (
+          <div className="text-green-400 text-sm mt-3 text-center bg-green-900/40 p-2 rounded-md border border-green-800 shadow-md">
+            {formState.message}
+          </div>
+        )}
+
+        {/* BOTÓN DE CAMBIO */}
+        <div className="mt-5 text-center">
+          <button
+            onClick={() => setIsSignUp(!isSignUp)}
+            className="text-sm font-medium text-[#ff8c1a] hover:text-[#ffad33] transition"
+          >
+            {isSignUp
+              ? '¿Ya tienes una cuenta? Inicia sesión'
+              : '¿No tienes una cuenta? Crea una'}
+          </button>
         </div>
       </div>
     </div>

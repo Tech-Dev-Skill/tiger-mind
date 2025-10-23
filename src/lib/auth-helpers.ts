@@ -11,10 +11,10 @@ import {
 // TIPOS COMPARTIDOS
 // =============================================
 
-// Se define un tipo explícito para el estado de los formularios de autenticación
 export interface AuthFormState {
-  error?: string | null;
-  message?: string | null;
+  success?: boolean;
+  error?: string;
+  message?: string;
 }
 
 // =============================================
@@ -32,36 +32,35 @@ export async function getUser() {
   }
 }
 
-// ... (las otras funciones de solo lectura como getSession, getUserProfile se mantienen igual)
 export async function getSession() {
-    const supabase = await createClientForServerComponent();
-    try {
-        const { data: { session } } = await supabase.auth.getSession();
-        return session;
-    } catch (error) {
-        console.error('Error getting session:', error);
-        return null;
-    }
+  const supabase = await createClientForServerComponent();
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    return session;
+  } catch (error) {
+    console.error('Error getting session:', error);
+    return null;
+  }
 }
 
 export async function getUserProfile(userId: string) {
-    const supabase = await createClientForServerComponent();
-    try {
-        const { data, error } = await supabase
-            .from('profiles')
-            .select('id, email, full_name, phone, country, avatar_url, created_at, updated_at, role')
-            .eq('id', userId)
-            .single();
+  const supabase = await createClientForServerComponent();
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('id, email, full_name, phone, country, avatar_url, created_at, updated_at, role')
+      .eq('id', userId)
+      .single();
 
-        if (error) {
-            console.error('Error getting user profile:', error.message);
-            return null;
-        }
-        return data;
-    } catch (error) {
-        console.error('Exception in getUserProfile:', error);
-        return null;
+    if (error) {
+      console.error('Error getting user profile:', error.message);
+      return null;
     }
+    return data;
+  } catch (error) {
+    console.error('Exception in getUserProfile:', error);
+    return null;
+  }
 }
 
 // =============================================
@@ -74,40 +73,49 @@ export async function signOut() {
   redirect('/login');
 }
 
-export async function signInAction(prevState: AuthFormState, formData: FormData): Promise<AuthFormState> {
+export async function signInAction(
+  prevState: AuthFormState,
+  formData: FormData
+): Promise<AuthFormState> {
   const supabase = await createClientForServerAction();
 
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
 
   if (!email || !password) {
-    return { error: 'El email y la contraseña son obligatorios.' };
+    return { success: false, error: 'El email y la contraseña son obligatorios.' };
   }
 
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
-    return { error: 'Credenciales inválidas. Por favor, inténtalo de nuevo.' };
+    return { success: false, error: 'Credenciales inválidas. Por favor, inténtalo de nuevo.' };
   }
 
-  if (data.user) {
+  if (data?.user) {
     const { data: profile } = await supabase
       .from('profiles')
       .select('role')
       .eq('id', data.user.id)
       .single();
 
+    // ✅ Retornamos un mensaje antes de redirigir (para SSR)
     if (profile?.role === 'admin' || profile?.role === 'super_admin') {
       redirect('/admin');
     } else {
       redirect('/student');
     }
+
+    return { success: true, message: 'Inicio de sesión exitoso. Redirigiendo...' };
   }
-  
-  return { error: 'Un error inesperado ocurrió.' };
+
+  return { success: false, error: 'Ocurrió un error inesperado.' };
 }
 
-export async function signUpAction(prevState: AuthFormState, formData: FormData): Promise<AuthFormState> {
+export async function signUpAction(
+  prevState: AuthFormState,
+  formData: FormData
+): Promise<AuthFormState> {
   const supabase = await createClientForServerAction();
 
   const email = formData.get('email') as string;
@@ -115,11 +123,11 @@ export async function signUpAction(prevState: AuthFormState, formData: FormData)
   const fullName = formData.get('fullName') as string;
 
   if (!email || !password || !fullName) {
-    return { error: 'Todos los campos son obligatorios.' };
+    return { success: false, error: 'Todos los campos son obligatorios.' };
   }
-  
+
   if (password.length < 6) {
-    return { error: 'La contraseña debe tener al menos 6 caracteres.' };
+    return { success: false, error: 'La contraseña debe tener al menos 6 caracteres.' };
   }
 
   const { error } = await supabase.auth.signUp({
@@ -129,8 +137,11 @@ export async function signUpAction(prevState: AuthFormState, formData: FormData)
   });
 
   if (error) {
-    return { error: 'No se pudo crear la cuenta: ' + error.message };
+    return { success: false, error: `No se pudo crear la cuenta: ${error.message}` };
   }
 
-  return { message: '¡Registro exitoso! Revisa tu email para confirmar tu cuenta.' };
+  return {
+    success: true,
+    message: '¡Registro exitoso! Revisa tu email para confirmar tu cuenta.'
+  };
 }
