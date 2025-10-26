@@ -90,13 +90,7 @@ export default function TigermindLanding() {
 
           <div className="grid md:grid-cols-2 gap-12 items-center mb-12">
             <div className="order-2 md:order-1">
-              <Image
-                src="/images/1_index.jpg"
-                alt="Nixon"
-                width={450}
-                height={300}
-                className="rounded-lg w-full h-auto"
-              />
+              <img src="/images/1_index.jpg" alt="Nixon" />
             </div>
             <div className="order-1 md:order-2">
                 <h4 className="text-3xl font-bold mb-4 text-center">2020</h4>
@@ -122,13 +116,7 @@ export default function TigermindLanding() {
                   </p>
               </div>
             <div>
-                <Image
-                src="/images/2_index.jpg"
-                alt="Nixon"
-                width={450}
-                height={300}
-                className="rounded-lg w-full h-auto"
-              />
+              <img src="/images/2_index.jpg" alt="Nixon" />
             </div>
           </div>
 
