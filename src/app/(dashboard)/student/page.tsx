@@ -202,7 +202,7 @@ export default function StudentDashboard() {
                         videos
                           .filter(v => v.course_id === course.id)
                           .map(video => {
-                            const url = video.video_url || '';
+                            const url = 'https://tigermind.fit/'+video.video_url || '';
                             const isLocal = isLocalVideoFile(url);
                             const isYT = isYouTubeUrl(url);
 

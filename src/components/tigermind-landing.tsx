@@ -123,7 +123,7 @@ export default function TigermindLanding() {
               </div>
             <div>
                 <Image
-                src="/images/2_index.png"
+                src="/images/2_index.jpg"
                 alt="Nixon"
                 width={450}
                 height={300}
@@ -149,7 +149,7 @@ export default function TigermindLanding() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <Image 
-                src="/images/3_index.png" 
+                src="/images/3_index.jpg" 
                 alt="Nixon" 
                 width={500} 
                 height={500} 
@@ -179,7 +179,7 @@ export default function TigermindLanding() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <Image 
-                src="/images/4_index.png" 
+                src="/images/4_index.jpg" 
                 alt="Nixon" 
                 width={500} 
                 height={500} 
@@ -215,7 +215,7 @@ export default function TigermindLanding() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <Image 
-                src="/images/5_index.png" 
+                src="/images/5_index.jpg" 
                 alt="Nixon" 
                 width={500} 
                 height={500} 
@@ -292,7 +292,7 @@ export default function TigermindLanding() {
 
           <div className="max-w-4xl mx-auto">
             <Image 
-              src="/images/6_index.png" 
+              src="/images/6_index.jpg" 
               alt="Community" 
               width={800} 
               height={450} 
