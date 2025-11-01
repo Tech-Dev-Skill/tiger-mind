@@ -3,6 +3,7 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { BarChart3, Users, BookOpen, DollarSign, Settings, LogOut, PlusCircle, Edit3 } from 'lucide-react'
+import LogoutButton from '@/components/LogoutButton'
 
 async function createServerSupabaseClient() {
   const cookieStore = await cookies()
@@ -33,7 +34,7 @@ async function getAdminData() {
 
   try {
     const { data: { user } } = await supabase.auth.getUser()
-    
+
     if (!user) {
       redirect('/login')
     }
@@ -105,15 +106,7 @@ export default async function AdminDashboard() {
               <span className="text-gray-300">
                 Admin: {data.user.user_metadata?.full_name || data.user.email}
               </span>
-              <form action="/api/auth/signout" method="post">
-                <button
-                  type="submit"
-                  className="flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-                >
-                  <LogOut className="w-4 h-4" />
-                  <span>Cerrar Sesión</span>
-                </button>
-              </form>
+              <LogoutButton />
             </div>
           </div>
         </div>
@@ -171,7 +164,7 @@ export default async function AdminDashboard() {
               <Users className="w-5 h-5" />
               <span>Gestionar Usuarios</span>
             </Link>
-            
+
           </div>
         </div>
 
@@ -187,11 +180,10 @@ export default async function AdminDashboard() {
                     <p className="text-sm font-medium text-white">{user.full_name}</p>
                     <p className="text-xs text-gray-400">{user.email}</p>
                   </div>
-                  <span className={`px-2 py-1 text-xs rounded ${
-                    user.role === 'admin' ? 'bg-red-600 text-white' : 
-                    user.role === 'student' ? 'bg-blue-600 text-white' : 
-                    'bg-gray-600 text-white'
-                  }`}>
+                  <span className={`px-2 py-1 text-xs rounded ${user.role === 'admin' ? 'bg-red-600 text-white' :
+                      user.role === 'student' ? 'bg-blue-600 text-white' :
+                        'bg-gray-600 text-white'
+                    }`}>
                     {user.role}
                   </span>
                 </div>
@@ -209,9 +201,8 @@ export default async function AdminDashboard() {
                     <p className="text-sm font-medium text-white">{course.title}</p>
                     <p className="text-xs text-gray-400">${course.price}</p>
                   </div>
-                  <span className={`px-2 py-1 text-xs rounded ${
-                    course.is_published ? 'bg-green-600 text-white' : 'bg-yellow-600 text-white'
-                  }`}>
+                  <span className={`px-2 py-1 text-xs rounded ${course.is_published ? 'bg-green-600 text-white' : 'bg-yellow-600 text-white'
+                    }`}>
                     {course.is_published ? 'Publicado' : 'Borrador'}
                   </span>
                 </div>

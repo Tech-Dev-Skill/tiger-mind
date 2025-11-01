@@ -4,7 +4,7 @@ import { createClientForServerComponent } from '@/lib/server';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { PlusCircle, Edit3, Trash2, BookOpen, LayoutList } from 'lucide-react';
-import { deleteCourseAction } from './actions';
+
 
 // Tipo 'Course' simplificado para esta página
 type Course = {
@@ -93,12 +93,6 @@ export default async function AdminCoursesPage() {
                                     <Link href={`/admin/courses/${course.id}/edit`} className="text-orange-400 hover:text-orange-500" title="Editar Detalles del Curso">
                                         <Edit3 className="w-5 h-5" />
                                     </Link>
-                                    <form action={deleteCourseAction}>
-                                        <input type="hidden" name="id" value={course.id} />
-                                        <button type="submit" className="text-red-400 hover:text-red-500" title="Eliminar curso">
-                                            <Trash2 className="w-5 h-5" />
-                                        </button>
-                                    </form>
                                 </div>
                             </td>
                         </tr>
