@@ -6,13 +6,13 @@ import Link from 'next/link';
 import UserEditForm from './edit-form';
 
 interface EditUserPageProps {
-  params: { 
+  params: Promise<{ 
     id: string; 
-  };
+  }>;
 }
 
 export default async function EditUserPage({ params }: EditUserPageProps) {
-  const { id } = params;
+  const { id } = await params;
   const supabase = await createClientForServerComponent();
 
   // Verificamos si el administrador está logueado

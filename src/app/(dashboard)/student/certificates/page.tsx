@@ -1,9 +1,10 @@
-import { createClient } from '@/lib/server';
+import { createClientForServerComponent } from '@/lib/server';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
+import { createClient } from '@/lib/client';
 
 async function getStudentData(userId: string) {
-  const supabase = await createClient(); // <-- CORREGIDO
+  const supabase = await createClientForServerComponent(); // <-- CORREGIDO
   
   const [profile, subscriptions, certificates] = await Promise.all([
     supabase

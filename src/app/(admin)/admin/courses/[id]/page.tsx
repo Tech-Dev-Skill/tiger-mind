@@ -1,10 +1,10 @@
-import { createClient } from '@/lib/server';
+import { createClientForServerComponent } from '@/lib/server';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { Eye, Edit3, PlusCircle, Trash2, BookOpen, PlayCircle, Clock, Users } from 'lucide-react';
 
 async function getCourse(id: string) {
-  const supabase = await createClient(); // <-- CORRECCIÓN: Se añadió 'await'
+  const supabase = await createClientForServerComponent(); // <-- CORRECCIÓN: Se añadió 'await'
   
   // Verificar autenticación
   const { data: { user } } = await supabase.auth.getUser();
