@@ -49,6 +49,7 @@ export async function POST(request: NextRequest) {
       .insert({
         id: user.id,
         email: user.email,
+        is_active: false,
         full_name: user.user_metadata?.full_name || null,
         role: 'student'
       })

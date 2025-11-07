@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Limitar tamaño (500MB para producción)
-    const maxSize = 500 * 1024 * 1024 // 500MB
+    const maxSize = 5 * 1024 * 1024 * 1024 // 5GB
     if (file.size > maxSize) {
       return NextResponse.json({ error: 'El archivo excede el tamaño máximo de 500MB' }, { status: 400 })
     }
