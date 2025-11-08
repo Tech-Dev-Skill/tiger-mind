@@ -41,7 +41,7 @@ const nextConfig: NextConfig = {
   experimental: {
     // 👇 Aumenta el límite de tamaño del cuerpo para Server Actions
     serverActions: {
-      bodySizeLimit: '100mb',
+      bodySizeLimit: '5gb',
     },
   },
 
