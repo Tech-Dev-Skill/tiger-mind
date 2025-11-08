@@ -6,20 +6,21 @@ import { createVideoAction } from '../../../actions';
 
 export default function NewVideoPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
-  const { id: courseId } = React.use(params); // 👈 aquí se "desenvuelve" la promesa
+  const { id: courseId } = React.use(params); // 👈 desenvuelve la promesa
 
-
+  const [isUploading, setIsUploading] = React.useState(false);
   const [state, formAction] = React.useActionState(createVideoAction, { error: null, success: false });
 
   React.useEffect(() => {
     if (state.success) router.push(`/admin/courses/${courseId}/content`);
-  }, [state.success, router, courseId]);
+    if (state.error) setIsUploading(false); // si hubo error, volvemos a habilitar
+  }, [state.success, state.error, router, courseId]);
 
   return (
     <div className="p-6 max-w-3xl mx-auto">
       <h1 className="text-2xl font-bold mb-4">Agregar nuevo video</h1>
 
-      <form action={formAction} className="space-y-4">
+      <form action={formAction} onSubmit={() => setIsUploading(true)} className="space-y-4">
         <input type="hidden" name="courseId" value={courseId} />
 
         <div>
@@ -28,6 +29,7 @@ export default function NewVideoPage({ params }: { params: Promise<{ id: string 
             type="text"
             name="title"
             required
+            disabled={isUploading}
             className="w-full border rounded-lg p-2"
           />
         </div>
@@ -37,6 +39,7 @@ export default function NewVideoPage({ params }: { params: Promise<{ id: string 
           <textarea
             name="description"
             required
+            disabled={isUploading}
             className="w-full border rounded-lg p-2"
           />
         </div>
@@ -48,6 +51,7 @@ export default function NewVideoPage({ params }: { params: Promise<{ id: string 
             name="video"
             accept="video/*"
             required
+            disabled={isUploading}
             className="w-full"
           />
         </div>
@@ -56,9 +60,14 @@ export default function NewVideoPage({ params }: { params: Promise<{ id: string 
 
         <button
           type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+          disabled={isUploading}
+          aria-busy={isUploading}
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
         >
-          Guardar video
+          {isUploading && (
+            <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
+          )}
+          {isUploading ? 'Subiendo…' : 'Guardar video'}
         </button>
       </form>
     </div>

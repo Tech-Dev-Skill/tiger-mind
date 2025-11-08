@@ -211,36 +211,16 @@ export default function StudentDashboard() {
                                 <h4 className="text-lg font-semibold text-gray-800 mb-2">{video.title}</h4>
 
                                 <div className="aspect-video rounded-lg overflow-hidden shadow">
-                                  {isLocal ? (
-                                    // Si es archivo local (mp4, webm, etc.) usamos <video controls>
-                                    <video
-                                      controls
-                                      preload="metadata"
-                                      src={url}
-                                      className="w-full h-full object-cover"
-                                    />
-                                  ) : isYT ? (
-                                    // Si es YouTube, construimos embed sin autoplay
-                                    <iframe
-                                      width="100%"
-                                      height="100%"
-                                      src={buildCleanEmbedUrl(url)}
-                                      title={video.title}
-                                      // no "allow=autoplay"
-                                      allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                      allowFullScreen
-                                    />
-                                  ) : (
-                                    // Otros iframes: limpiar params autoplay y renderizar en iframe
-                                    <iframe
-                                      width="100%"
-                                      height="100%"
-                                      src={buildCleanEmbedUrl(url)}
-                                      title={video.title}
-                                      allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                      allowFullScreen
-                                    />
-                                  )}
+                                  <video
+                                    controls
+                                    preload="metadata"
+                                    src={url}
+                                    className="w-full h-full object-cover"
+                                    controlsList="nodownload noplaybackrate"
+                                    disablePictureInPicture
+                                    onContextMenu={(e) => e.preventDefault()}
+                                    playsInline
+                                  />
                                 </div>
                               </div>
                             );

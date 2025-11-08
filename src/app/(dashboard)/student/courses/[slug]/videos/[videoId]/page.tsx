@@ -299,9 +299,14 @@ export default function VideoPlayerPage() {
                   <video
                     className="w-full h-full"
                     controls
+                    controlsList="nodownload noplaybackrate"
+                    disablePictureInPicture
+                    onContextMenu={(e) => e.preventDefault()}
                     onTimeUpdate={(e) => handleVideoProgress(Math.floor(e.currentTarget.currentTime))}
                     onEnded={handleVideoComplete}
                     src={video.video_url}
+                    preload="metadata"
+                    playsInline
                   >
                     Tu navegador no soporta el elemento de video.
                   </video>

@@ -201,14 +201,14 @@ export default function CourseVideosPage({ params }: { params: Promise<{ id: str
                       </div>
                     </div>
                     <div className="mt-4 sm:mt-0 flex space-x-3">
-                      <a
-                        href={video.video_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center px-3 py-1.5 border border-orange-600 text-orange-400 text-sm font-medium rounded-md hover:bg-orange-600 hover:text-white transition-colors"
+                      {/* Enlace directo eliminado para proteger el contenido */}
+                      <button
+                        type="button"
+                        className="inline-flex items-center px-3 py-1.5 border border-gray-600 text-gray-300 text-sm font-medium rounded-md cursor-not-allowed opacity-60"
+                        title="Vista directa deshabilitada para proteger el contenido"
                       >
                         Ver Video
-                      </a>
+                      </button>
                       <button
                         type="button"
                         onClick={() => handleDelete(video.id)}
