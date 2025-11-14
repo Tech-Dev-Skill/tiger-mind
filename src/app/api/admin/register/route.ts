@@ -59,7 +59,7 @@ export async function POST(request: Request) {
         email,
         full_name: fullName,
         role: role as 'admin' | 'super_admin',
-        is_active: true
+        is_active: false
       })
 
     if (profileError) {

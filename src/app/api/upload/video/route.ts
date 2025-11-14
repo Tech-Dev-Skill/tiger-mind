@@ -76,10 +76,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Tipo de archivo no permitido' }, { status: 400 })
     }
 
-    // Limitar tamaño (500MB para producción)
-    const maxSize = 500 * 1024 * 1024 // 500MB
+    // Limitar tamaño máximo a 5GB
+    const maxSize = 5 * 1024 * 1024 * 1024 // 5GB
     if (file.size > maxSize) {
-      return NextResponse.json({ error: 'El archivo excede el tamaño máximo de 500MB' }, { status: 400 })
+      return NextResponse.json({ error: 'El archivo excede el tamaño máximo de 5GB' }, { status: 400 })
     }
 
     // Crear directorio si no existe

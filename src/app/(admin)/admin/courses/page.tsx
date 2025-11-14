@@ -3,7 +3,8 @@
 import { createClientForServerComponent } from '@/lib/server';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { PlusCircle, Edit3, BookOpen, LayoutList } from 'lucide-react';
+import { PlusCircle, Edit3, Trash2, BookOpen, LayoutList } from 'lucide-react';
+
 
 // Tipo 'Course' simplificado para esta página
 type Course = {
@@ -85,15 +86,13 @@ export default async function AdminCoursesPage() {
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                 <div className="flex items-center space-x-4">
-                                    {/* --- BOTÓN PARA GESTIONAR CONTENIDO --- */}
+                                    {/* --- NUEVO BOTÓN PARA GESTIONAR CONTENIDO --- */}
                                     <Link href={`/admin/courses/${course.id}/content`} className="text-blue-400 hover:text-blue-500" title="Gestionar Contenido (Módulos y Videos)">
                                         <LayoutList className="w-5 h-5" />
                                     </Link>
-                                    {/* --- BOTÓN PARA EDITAR DETALLES --- */}
                                     <Link href={`/admin/courses/${course.id}/edit`} className="text-orange-400 hover:text-orange-500" title="Editar Detalles del Curso">
                                         <Edit3 className="w-5 h-5" />
                                     </Link>
-                                    {/* Se ha eliminado el botón de borrar curso */}
                                 </div>
                             </td>
                         </tr>
