@@ -39,6 +39,7 @@ type Video = {
   title: string;
   video_url: string;
   course_id: string;
+  description?: string | null; // <- opcional por si tu typing no lo tenía
 };
 
 export default function StudentDashboard() {
@@ -77,7 +78,7 @@ export default function StudentDashboard() {
 
         setCourses(coursesData || []);
 
-        // Traer videos de la tabla "videos" que pertenezcan a esos cursos
+        // Traer videos
         if (coursesData && coursesData.length > 0) {
           const courseIds = coursesData.map((c: Course) => c.id);
           const { data: videosData } = await supabase
@@ -98,51 +99,35 @@ export default function StudentDashboard() {
   if (loading) return <div className="p-8 text-center">Cargando...</div>;
   if (!profile) return <div className="p-8 text-center text-red-500">Error al cargar el perfil.</div>;
 
-  // Utilidades para limpiar / construir URLs de embed sin autoplay
+  // Utilidades para limpiar URLs (sin cambios)
   const isYouTubeUrl = (url: string) => /youtube\.com|youtu\.be/.test(url);
   const extractYouTubeId = (url: string) => {
     try {
-      // Maneja varios formatos: watch?v=, youtu.be/, embed/
       const u = new URL(url);
-      if (u.hostname.includes('youtu.be')) {
-        return u.pathname.slice(1);
-      }
-      if (u.pathname.includes('/embed/')) {
-        return u.pathname.split('/embed/')[1].split(/[?&]/)[0];
-      }
-      const v = u.searchParams.get('v');
-      return v;
+      if (u.hostname.includes('youtu.be')) return u.pathname.slice(1);
+      if (u.pathname.includes('/embed/')) return u.pathname.split('/embed/')[1].split(/[?&]/)[0];
+      return u.searchParams.get('v');
     } catch {
-      // fallback regex
       const m = url.match(/(?:v=|\/embed\/|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
       return m ? m[1] : null;
     }
   };
-
   const isLocalVideoFile = (url: string) => {
     if (!url) return false;
-    // Rutas locales como /videos/... o extensiones de vídeo
     const lower = url.toLowerCase();
     return lower.startsWith('/') || /\.(mp4|webm|ogg|mov|mkv)$/i.test(lower);
   };
-
   const buildCleanEmbedUrl = (rawUrl: string) => {
     if (!rawUrl) return '';
-    // Si es YouTube -> convertir a embed con autoplay=0
     if (isYouTubeUrl(rawUrl)) {
       const id = extractYouTubeId(rawUrl);
-      if (id) {
-        return `https://www.youtube.com/embed/${id}?autoplay=0&rel=0&modestbranding=1`;
-      }
+      return id ? `https://www.youtube.com/embed/${id}?autoplay=0&rel=0&modestbranding=1` : rawUrl;
     }
-    // Para otros URLs (si ya tienen params) removemos autoplay
     try {
       const u = new URL(rawUrl);
       u.searchParams.delete('autoplay');
-      // No añadir autoplay=0 explícito para otros hosts (la ausencia de autoplay evita reproducir)
       return u.toString();
     } catch {
-      // Si no es una URL válida (raro), devolvemos la original
       return rawUrl;
     }
   };
@@ -150,6 +135,7 @@ export default function StudentDashboard() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
         {/* Header */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6 flex justify-between items-center">
           <div>
@@ -202,13 +188,21 @@ export default function StudentDashboard() {
                         videos
                           .filter(v => v.course_id === course.id)
                           .map(video => {
-                            const url = 'https://tigermind.fit/'+video.video_url || '';
-                            const isLocal = isLocalVideoFile(url);
-                            const isYT = isYouTubeUrl(url);
+                            const url = 'https://tigermind.fit/' + video.video_url || '';
 
                             return (
                               <div key={video.id} className="border rounded-lg p-4 bg-white shadow">
-                                <h4 className="text-lg font-semibold text-gray-800 mb-2">{video.title}</h4>
+                                
+                                <h4 className="text-lg font-semibold text-gray-800 mb-1">
+                                  {video.title}
+                                </h4>
+
+                                {/* ⭐ DESCRIPCIÓN AGREGADA ⭐ */}
+                                {video.description && (
+                                  <p className="text-gray-600 mb-3 whitespace-pre-line">
+                                    {video.description}
+                                  </p>
+                                )}
 
                                 <div className="aspect-video rounded-lg overflow-hidden shadow">
                                   <video
@@ -236,7 +230,6 @@ export default function StudentDashboard() {
               <p className="text-gray-600">No hay cursos activos disponibles.</p>
             )
           ) : (
-            // Si el usuario NO está activo
             <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 text-gray-700">
               <p className="mb-3">Actualmente no tienes una suscripción activa.</p>
               <Link

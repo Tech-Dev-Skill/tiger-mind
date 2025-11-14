@@ -4,7 +4,6 @@ import { createClientForServerComponent } from "@/lib/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { PlusCircle, Edit3, Trash2, Video } from "lucide-react";
-// Importamos la acción de eliminar video
 import { deleteVideoAction } from '../../actions';
 
 interface ContentPageProps {
@@ -16,6 +15,7 @@ interface ContentPageProps {
 type Video = {
     id: string;
     title: string;
+    description: string | null;
     order_index: number;
 };
 
@@ -37,6 +37,7 @@ export default async function CourseContentPage({ params }: ContentPageProps) {
             videos (
                 id,
                 title,
+                description,
                 order_index
             )
         `)
@@ -49,7 +50,7 @@ export default async function CourseContentPage({ params }: ContentPageProps) {
     }
 
     const course = data as CourseWithContent;
-    
+
     const sortedVideos = (course.videos && Array.isArray(course.videos))
         ? [...course.videos].sort((a, b) => a.order_index - b.order_index)
         : [];
@@ -81,38 +82,54 @@ export default async function CourseContentPage({ params }: ContentPageProps) {
                     <div className="space-y-3">
                         {sortedVideos.length > 0 ? (
                             sortedVideos.map((video) => (
-                                <div key={video.id} className="flex justify-between items-center p-3 bg-gray-700/50 rounded-md">
-                                    <div className="flex items-center gap-3">
-                                        <Video className="text-gray-400" size={18}/>
-                                        <p>{video.title}</p>
+                                <div
+                                    key={video.id}
+                                    className="flex justify-between items-center p-3 bg-gray-700/50 rounded-md"
+                                >
+                                    {/* TITULO + DESCRIPCIÓN */}
+                                    <div className="flex flex-col">
+                                        <div className="flex items-center gap-3">
+                                            <Video className="text-gray-400" size={18} />
+                                            <p className="font-semibold">{video.title}</p>
+                                        </div>
+
+                                        {video.description && (
+                                            <p className="text-gray-400 text-sm ml-7">
+                                                {video.description}
+                                            </p>
+                                        )}
                                     </div>
-                                    {/* --- INICIO DE LA ACTUALIZACIÓN --- */}
+
+                                    {/* BOTONES */}
                                     <div className="flex items-center gap-4">
-                                        {/* El botón de editar ahora es un Link */}
-                                        <Link 
-                                            href={`/admin/courses/${course.id}/videos/${video.id}/edit`} 
-                                            className="text-yellow-400 hover:text-yellow-500" 
+                                        <Link
+                                            href={`/admin/courses/${course.id}/videos/${video.id}/edit`}
+                                            className="text-yellow-400 hover:text-yellow-500"
                                             title="Editar Video"
                                         >
                                             <Edit3 size={16} />
                                         </Link>
-                                        
-                                        {/* El botón de eliminar ahora es un formulario */}
+
                                         <form action={deleteVideoAction}>
                                             <input type="hidden" name="videoId" value={video.id} />
                                             <input type="hidden" name="courseId" value={course.id} />
-                                            <button type="submit" className="text-red-400 hover:text-red-500" title="Eliminar Video">
+                                            <button
+                                                type="submit"
+                                                className="text-red-400 hover:text-red-500"
+                                                title="Eliminar Video"
+                                            >
                                                 <Trash2 size={16} />
                                             </button>
                                         </form>
                                     </div>
-                                    {/* --- FIN DE LA ACTUALIZACIÓN --- */}
                                 </div>
                             ))
                         ) : (
                             <div className="text-center py-8">
                                 <p className="text-gray-500">No hay videos en este curso.</p>
-                                <p className="text-sm text-gray-600 mt-2">Usa el botón &apos;Añadir Video&apos; para empezar.</p>
+                                <p className="text-sm text-gray-600 mt-2">
+                                    Usa el botón &apos;Añadir Video&apos; para empezar.
+                                </p>
                             </div>
                         )}
                     </div>
