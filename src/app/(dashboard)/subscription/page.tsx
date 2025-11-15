@@ -88,6 +88,16 @@ export default function SubscriptionPage() {
           auto_renew: true
         });
 
+      await supabase
+        .from('profiles')
+        .update({
+          is_active: true,
+          activation_date: startDate.toISOString(),
+          expiration_date: endDate.toISOString(),
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', userId);
+
       alert('¡Suscripción activada exitosamente!');
       router.push('/student');
 

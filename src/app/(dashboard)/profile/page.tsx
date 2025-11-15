@@ -30,7 +30,7 @@ export default function ProfilePage() {
     loadProfile()
   }, [])
 
-  const loadProfile = async () => {
+  async function loadProfile() {
     try {
       const { data: { user }, error: authError } = await supabase.auth.getUser()
 
@@ -95,7 +95,10 @@ export default function ProfilePage() {
                   id: user.id,
                   email: user.email,
                   full_name: user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0] || 'Estudiante',
-                  role: 'student'
+                  role: 'student',
+                  is_active: false,
+                  activation_date: null,
+                  expiration_date: null
                 })
                 .select()
                 .single()
