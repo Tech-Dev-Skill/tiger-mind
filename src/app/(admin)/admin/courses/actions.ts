@@ -328,7 +328,8 @@ export async function updateVideoAction(
     .from('videos')
     .update({
       title: title,
-      video_url: video_url
+      video_url: video_url,
+      description: description,
     })
     .eq('id', videoId);
 
