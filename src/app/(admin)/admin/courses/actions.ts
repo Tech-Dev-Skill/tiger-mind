@@ -315,7 +315,8 @@ export async function updateVideoAction(
   const supabase = await createClientForServerAction();
   
   const title = formData.get('title') as string;
-  const video_url = formData.get('video_url') as string; // Asumimos que también quieres editar la URL
+  const video_url = formData.get('video_url') as string;
+  const description = formData.get('description') as string | null;
   const videoId = formData.get('videoId') as string;
   const courseId = formData.get('courseId') as string;
 
