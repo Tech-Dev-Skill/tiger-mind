@@ -2,7 +2,7 @@ import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { BarChart3, Users, BookOpen, DollarSign, Settings, LogOut, PlusCircle, Edit3 } from 'lucide-react'
+import { BarChart3, Users, BookOpen, DollarSign, Video } from 'lucide-react'
 import LogoutButton from '@/components/LogoutButton'
 
 async function createServerSupabaseClient() {
@@ -164,7 +164,13 @@ export default async function AdminDashboard() {
               <Users className="w-5 h-5" />
               <span>Gestionar Usuarios</span>
             </Link>
-
+            <Link
+              href="/admin/live-classes"
+              className="flex items-center justify-center space-x-2 px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+            >
+              <Video className="w-5 h-5" />
+              <span>Clases en Vivo</span>
+            </Link>
           </div>
         </div>
 
@@ -181,8 +187,8 @@ export default async function AdminDashboard() {
                     <p className="text-xs text-gray-400">{user.email}</p>
                   </div>
                   <span className={`px-2 py-1 text-xs rounded ${user.role === 'admin' ? 'bg-red-600 text-white' :
-                      user.role === 'student' ? 'bg-blue-600 text-white' :
-                        'bg-gray-600 text-white'
+                    user.role === 'student' ? 'bg-blue-600 text-white' :
+                      'bg-gray-600 text-white'
                     }`}>
                     {user.role}
                   </span>

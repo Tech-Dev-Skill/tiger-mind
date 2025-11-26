@@ -1,4 +1,3 @@
-// src/app/(dashboard)/student/page.tsx
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -6,6 +5,7 @@ import { createClient } from '@/lib/client';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { signOut } from '@/lib/auth-helpers';
+import { Video } from 'lucide-react';
 
 // --- Tipos ---
 type Category = {
@@ -34,19 +34,29 @@ type Profile = {
   expiration_date?: string | null;
 };
 
-type Video = {
+type VideoType = {
   id: string;
   title: string;
   video_url: string;
   course_id: string;
-  description?: string | null; // <- opcional por si tu typing no lo tenía
+  description?: string | null;
+};
+
+type LiveClass = {
+  id: string;
+  title: string;
+  description: string;
+  zoom_url: string;
+  start_date: string;
 };
 
 export default function StudentDashboard() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [courses, setCourses] = useState<Course[]>([]);
-  const [videos, setVideos] = useState<Video[]>([]);
+  const [videos, setVideos] = useState<VideoType[]>([]);
+  const [liveClass, setLiveClass] = useState<LiveClass | null>(null);
   const [loading, setLoading] = useState(true);
+  const [selectedVideo, setSelectedVideo] = useState<VideoType | null>(null);
 
   const supabase = createClient();
 
@@ -67,7 +77,7 @@ export default function StudentDashboard() {
 
       setProfile(profileData || null);
 
-      // Si el usuario está activo → traer cursos y videos
+      // Si el usuario está activo → traer cursos, videos y clases en vivo
       if (profileData?.is_active) {
         // Cursos publicados
         const { data: coursesData } = await supabase
@@ -84,9 +94,23 @@ export default function StudentDashboard() {
           const { data: videosData } = await supabase
             .from('videos')
             .select('*')
-            .in('course_id', courseIds);
+            .in('course_id', courseIds)
+            .order('created_at', { ascending: false });
 
           setVideos(videosData || []);
+        }
+
+        // Obtener SOLO la última clase en vivo creada
+        const { data: latestClass } = await supabase
+          .from('live_classes')
+          .select('*')
+          .gte('start_date', new Date().toISOString())
+          .order('start_date', { ascending: true })
+          .limit(1)
+          .single();
+
+        if (latestClass) {
+          setLiveClass(latestClass);
         }
       }
 
@@ -99,43 +123,10 @@ export default function StudentDashboard() {
   if (loading) return <div className="p-8 text-center">Cargando...</div>;
   if (!profile) return <div className="p-8 text-center text-red-500">Error al cargar el perfil.</div>;
 
-  // Utilidades para limpiar URLs (sin cambios)
-  const isYouTubeUrl = (url: string) => /youtube\.com|youtu\.be/.test(url);
-  const extractYouTubeId = (url: string) => {
-    try {
-      const u = new URL(url);
-      if (u.hostname.includes('youtu.be')) return u.pathname.slice(1);
-      if (u.pathname.includes('/embed/')) return u.pathname.split('/embed/')[1].split(/[?&]/)[0];
-      return u.searchParams.get('v');
-    } catch {
-      const m = url.match(/(?:v=|\/embed\/|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
-      return m ? m[1] : null;
-    }
-  };
-  const isLocalVideoFile = (url: string) => {
-    if (!url) return false;
-    const lower = url.toLowerCase();
-    return lower.startsWith('/') || /\.(mp4|webm|ogg|mov|mkv)$/i.test(lower);
-  };
-  const buildCleanEmbedUrl = (rawUrl: string) => {
-    if (!rawUrl) return '';
-    if (isYouTubeUrl(rawUrl)) {
-      const id = extractYouTubeId(rawUrl);
-      return id ? `https://www.youtube.com/embed/${id}?autoplay=0&rel=0&modestbranding=1` : rawUrl;
-    }
-    try {
-      const u = new URL(rawUrl);
-      u.searchParams.delete('autoplay');
-      return u.toString();
-    } catch {
-      return rawUrl;
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
+
         {/* Header */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6 flex justify-between items-center">
           <div>
@@ -154,6 +145,32 @@ export default function StudentDashboard() {
             Cerrar sesión
           </button>
         </div>
+
+        {/* Live Class Banner - SOLO la última clase */}
+        {liveClass && (
+          <div className="bg-gradient-to-r from-red-600 to-red-800 rounded-xl p-6 shadow-lg text-white flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
+            <div className="flex-1">
+              <div className="flex items-center space-x-2 mb-2">
+                <span className="bg-red-500 text-xs font-bold px-2 py-1 rounded animate-pulse">PRÓXIMA CLASE EN VIVO</span>
+                <h3 className="text-xl font-bold">{liveClass.title}</h3>
+              </div>
+              <p className="text-red-100 mb-2">{liveClass.description}</p>
+              <div className="flex items-center space-x-2 text-sm font-medium bg-red-900/30 px-3 py-1 rounded-lg inline-block">
+                <span className="text-red-200">Fecha:</span>
+                <span>{new Date(liveClass.start_date).toLocaleString()}</span>
+              </div>
+            </div>
+            <a
+              href={liveClass.zoom_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-6 py-3 bg-white text-red-600 font-bold rounded-lg hover:bg-gray-100 transition-colors flex items-center space-x-2 whitespace-nowrap"
+            >
+              <Video className="w-5 h-5" />
+              <span>Unirse a la Clase</span>
+            </a>
+          </div>
+        )}
 
         {/* Clase gratuita */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
@@ -182,43 +199,34 @@ export default function StudentDashboard() {
                     <h3 className="text-2xl font-bold text-gray-800 mb-4">{course.title}</h3>
                     <p className="text-gray-600 mb-4">{course.short_description || 'Sin descripción disponible.'}</p>
 
-                    {/* Videos del curso */}
-                    <div className="space-y-4">
+                    {/* Videos del curso - FORMATO LISTA */}
+                    <div className="space-y-3">
                       {videos.filter(v => v.course_id === course.id).length > 0 ? (
                         videos
                           .filter(v => v.course_id === course.id)
-                          .map(video => {
-                            const url = 'https://tigermind.fit/' + video.video_url || '';
-
-                            return (
-                              <div key={video.id} className="border rounded-lg p-4 bg-white shadow">
-                                
-                                <h4 className="text-lg font-semibold text-gray-800 mb-1">
-                                  {video.title}
-                                </h4>
-
-                                {/* ⭐ DESCRIPCIÓN AGREGADA ⭐ */}
-                                {video.description && (
-                                  <p className="text-gray-600 mb-3 whitespace-pre-line">
-                                    {video.description}
-                                  </p>
-                                )}
-
-                                <div className="aspect-video rounded-lg overflow-hidden shadow">
-                                  <video
-                                    controls
-                                    preload="metadata"
-                                    src={url}
-                                    className="w-full h-full object-cover"
-                                    controlsList="nodownload noplaybackrate"
-                                    disablePictureInPicture
-                                    onContextMenu={(e) => e.preventDefault()}
-                                    playsInline
-                                  />
+                          .map(video => (
+                            <div key={video.id} className="border-l-4 border-blue-500 bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow">
+                              <div className="flex items-start justify-between gap-4">
+                                <div className="flex-1">
+                                  <h4 className="text-lg font-semibold text-gray-800 mb-2">
+                                    {video.title}
+                                  </h4>
+                                  {video.description && (
+                                    <p className="text-gray-600 text-sm mb-3 whitespace-pre-line">
+                                      {video.description}
+                                    </p>
+                                  )}
                                 </div>
+                                <button
+                                  onClick={() => setSelectedVideo(video)}
+                                  className="flex-shrink-0 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center space-x-2"
+                                >
+                                  <Video className="w-4 h-4" />
+                                  <span>Ver Video</span>
+                                </button>
                               </div>
-                            );
-                          })
+                            </div>
+                          ))
                       ) : (
                         <p className="text-gray-500 italic">Este curso aún no tiene videos disponibles.</p>
                       )}
@@ -241,6 +249,51 @@ export default function StudentDashboard() {
             </div>
           )}
         </div>
+
+        {/* Modal de Video - Pantalla completa con protección */}
+        {selectedVideo && (
+          <div
+            className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4"
+            onClick={() => setSelectedVideo(null)}
+          >
+            <div
+              className="relative w-full max-w-6xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Botón cerrar */}
+              <button
+                onClick={() => setSelectedVideo(null)}
+                className="absolute -top-12 right-0 text-white hover:text-gray-300 text-xl font-bold bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition-colors"
+              >
+                ✕ Cerrar
+              </button>
+
+              {/* Título del video */}
+              <div className="bg-gray-900 text-white p-4 rounded-t-lg">
+                <h3 className="text-xl font-bold">{selectedVideo.title}</h3>
+                {selectedVideo.description && (
+                  <p className="text-gray-300 text-sm mt-2">{selectedVideo.description}</p>
+                )}
+              </div>
+
+              {/* Video Player */}
+              <div className="bg-black rounded-b-lg overflow-hidden">
+                <video
+                  controls
+                  autoPlay
+                  className="w-full aspect-video"
+                  controlsList="nodownload noplaybackrate"
+                  disablePictureInPicture
+                  onContextMenu={(e) => e.preventDefault()}
+                  playsInline
+                  src={`https://tigermind.fit/${selectedVideo.video_url}`}
+                >
+                  Tu navegador no soporta el elemento de video.
+                </video>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
