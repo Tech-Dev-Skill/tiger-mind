@@ -238,9 +238,9 @@ export default function StudentDashboard() {
                         <div className="p-6 md:p-8 md:w-3/5 lg:w-2/3 flex flex-col justify-between">
                           <div>
                             <div className="flex justify-between items-start gap-4 mb-4">
-                                <h3 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">
-                                  {course.title}
-                                </h3>
+                              <h3 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">
+                                {course.title}
+                              </h3>
                             </div>
 
                             <p className="text-gray-600 mb-6 text-lg leading-relaxed line-clamp-3">
@@ -285,34 +285,36 @@ export default function StudentDashboard() {
                             <PlayCircle className="w-4 h-4 mr-2 text-orange-600" />
                             Contenido del Curso
                           </h4>
-                          <div className="grid gap-3">
+                          <div className="space-y-8">
                             {courseVideos.map((video) => (
-                              <div 
-                                key={video.id} 
-                                className="group bg-white border border-gray-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-orange-200 hover:shadow-sm transition-all"
+                              <div
+                                key={video.id}
+                                className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
                               >
-                                <div className="flex items-start gap-3">
-                                  <div className="p-2 bg-gray-100 rounded-lg group-hover:bg-orange-50 transition-colors">
-                                    <Video className="w-5 h-5 text-gray-500 group-hover:text-orange-600" />
-                                  </div>
-                                  <div>
-                                    <h4 className="font-semibold text-gray-800 group-hover:text-orange-700 transition-colors">
-                                      {video.title}
-                                    </h4>
-                                    {video.description && (
-                                      <p className="text-sm text-gray-500 line-clamp-1 mt-0.5">
-                                        {video.description}
-                                      </p>
-                                    )}
-                                  </div>
+                                <div className="p-4 sm:p-6 border-b border-gray-100">
+                                  <h4 className="text-lg font-bold text-gray-900 mb-2 flex items-center gap-2">
+                                    <Video className="w-5 h-5 text-orange-600" />
+                                    {video.title}
+                                  </h4>
+                                  {video.description && (
+                                    <p className="text-gray-600 leading-relaxed">
+                                      {video.description}
+                                    </p>
+                                  )}
                                 </div>
-                                <div className="shrink-0">
-                                  <button 
-                                    onClick={() => setSelectedVideo(video)}
-                                    className="w-full sm:w-auto bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-orange-50 hover:text-orange-700 hover:border-orange-200 transition-all flex items-center justify-center"
+                                <div className="bg-black w-full">
+                                  <video
+                                    controls
+                                    className="w-full aspect-video"
+                                    controlsList="nodownload noplaybackrate"
+                                    disablePictureInPicture
+                                    onContextMenu={(e) => e.preventDefault()}
+                                    playsInline
+                                    preload="metadata"
+                                    src={`https://tigermind.fit/${video.video_url}`}
                                   >
-                                    Ver Video
-                                  </button>
+                                    Tu navegador no soporta el elemento de video.
+                                  </video>
                                 </div>
                               </div>
                             ))}
@@ -342,51 +344,6 @@ export default function StudentDashboard() {
             </div>
           )}
         </div>
-
-        {/* Modal de Video - Pantalla completa con protección */}
-        {selectedVideo && (
-          <div
-            className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4"
-            onClick={() => setSelectedVideo(null)}
-          >
-            <div
-              className="relative w-full max-w-6xl"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Botón cerrar */}
-              <button
-                onClick={() => setSelectedVideo(null)}
-                className="absolute -top-12 right-0 text-white hover:text-gray-300 text-xl font-bold bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition-colors"
-              >
-                ✕ Cerrar
-              </button>
-
-              {/* Título del video */}
-              <div className="bg-gray-900 text-white p-4 rounded-t-lg">
-                <h3 className="text-xl font-bold">{selectedVideo.title}</h3>
-                {selectedVideo.description && (
-                  <p className="text-gray-300 text-sm mt-2">{selectedVideo.description}</p>
-                )}
-              </div>
-
-              {/* Video Player */}
-              <div className="bg-black rounded-b-lg overflow-hidden">
-                <video
-                  controls
-                  autoPlay
-                  className="w-full aspect-video"
-                  controlsList="nodownload noplaybackrate"
-                  disablePictureInPicture
-                  onContextMenu={(e) => e.preventDefault()}
-                  playsInline
-                  src={`https://tigermind.fit/${selectedVideo.video_url}`}
-                >
-                  Tu navegador no soporta el elemento de video.
-                </video>
-              </div>
-            </div>
-          </div>
-        )}
 
       </div>
     </div>
