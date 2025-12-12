@@ -336,7 +336,7 @@ export default function StudentDashboard() {
               <h3 className="text-xl font-bold text-orange-800 mb-2">Suscripción Inactiva</h3>
               <p className="text-orange-700 mb-6">Activa tu suscripción para acceder a todos los cursos y contenidos exclusivos.</p>
               <Link
-                href="/subscription"
+                href="/checkout"
                 className="inline-flex items-center px-6 py-3 bg-orange-600 text-white font-bold rounded-xl hover:bg-orange-700 transition-colors shadow-sm"
               >
                 Activar Suscripción Ahora
